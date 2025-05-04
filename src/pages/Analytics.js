@@ -1,0 +1,131 @@
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { FiBarChart2, FiTrendingUp, FiMessageSquare } from 'react-icons/fi';
+import FinancialAnalytics from '../components/Analytics/FinancialAnalytics';
+import PredictiveAnalytics from '../components/Analytics/PredictiveAnalytics';
+import PersonalizedRecommendations from '../components/Analytics/PersonalizedRecommendations';
+
+const AnalyticsContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const AnalyticsHeader = styled.div`
+  margin-bottom: 36px;
+
+  h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 12px;
+    position: relative;
+    padding-bottom: 12px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
+    }
+  }
+
+  p {
+    color: var(--text-medium);
+    font-size: 1.1rem;
+  }
+`;
+
+const TabsContainer = styled.div`
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+`;
+
+const Tab = styled.button`
+  background: none;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  color: ${props => props.active ? 'var(--primary-color)' : 'var(--text-medium)'};
+  font-weight: ${props => props.active ? '600' : '400'};
+  border-bottom: 3px solid ${props => props.active ? 'var(--primary-color)' : 'transparent'};
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+
+  svg {
+    font-size: 1.2rem;
+  }
+`;
+
+/**
+ * Página de análisis
+ * @returns {JSX.Element} - Página de análisis
+ */
+const Analytics = () => {
+  const [activeTab, setActiveTab] = useState('financial');
+
+  // Renderizar contenido según la pestaña activa
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'financial':
+        return <FinancialAnalytics />;
+      case 'predictive':
+        return <PredictiveAnalytics />;
+      case 'recommendations':
+        return <PersonalizedRecommendations />;
+      default:
+        return <FinancialAnalytics />;
+    }
+  };
+
+  return (
+    <AnalyticsContainer>
+      <AnalyticsHeader>
+        <h1>Análisis</h1>
+        <p>Visualiza, analiza y recibe recomendaciones personalizadas basadas en tus datos financieros</p>
+      </AnalyticsHeader>
+
+      <TabsContainer>
+        <Tab
+          active={activeTab === 'financial'}
+          onClick={() => setActiveTab('financial')}
+        >
+          <FiBarChart2 /> Análisis Histórico
+        </Tab>
+        <Tab
+          active={activeTab === 'predictive'}
+          onClick={() => setActiveTab('predictive')}
+        >
+          <FiTrendingUp /> Predicciones
+        </Tab>
+        <Tab
+          active={activeTab === 'recommendations'}
+          onClick={() => setActiveTab('recommendations')}
+        >
+          <FiMessageSquare /> Recomendaciones
+        </Tab>
+      </TabsContainer>
+
+      {renderContent()}
+    </AnalyticsContainer>
+  );
+};
+
+export default Analytics;
