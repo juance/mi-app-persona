@@ -2,12 +2,14 @@
   "name": "mi-app-personal",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://juance.github.io/mi-app-persona",
   "dependencies": {
     "@fontsource/poppins": "^5.2.5",
     "@supabase/supabase-js": "^2.49.4",
     "@testing-library/dom": "^10.4.0",
     "axios": "^1.9.0",
     "chart.js": "^4.4.9",
+    "gh-pages": "^6.3.0",
     "react": "^19.1.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.1.0",
@@ -26,7 +28,9 @@
     "test:unit": "react-scripts test --testPathPattern=src/__tests__/unit",
     "test:integration": "react-scripts test --testPathPattern=src/__tests__/integration",
     "test:coverage": "react-scripts test --coverage",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
