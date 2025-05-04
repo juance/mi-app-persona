@@ -1,0 +1,19 @@
+"use strict";(self.webpackChunkmi_app_personal=self.webpackChunkmi_app_personal||[]).push([[962],{962:(o,r,i)=>{i.r(r),i.d(r,{default:()=>f});var e=i(5043),a=i(5016),n=i(377),t=i(159),c=i(6823),s=i(6618),l=i(5464),d=i(579);const u=l.Ay.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  display: ${o=>o.visible?"block":"none"};
+  animation: fadeOut 0.5s 3s forwards;
+  
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+`,f=()=>{const{user:o}=(0,a.A)(),[r,i]=(0,e.useState)(!1),[l,f]=(0,e.useState)(!1);return(0,e.useEffect)((()=>((async()=>{if(!r&&!l){i(!0);try{console.log("Inicializando la aplicaci\xf3n..."),await(0,n.s4)(),console.log("Base de datos IndexedDB inicializada");const o=(0,t.xL)({showNotifications:!0,interval:3e4});console.log("Servicio de sincronizaci\xf3n inicializado"),await(0,c.Lz)(),console.log("Service worker registrado"),(0,c.GT)(),console.log("Notificaciones verificadas"),window.syncService=o,f(!0),console.log("Aplicaci\xf3n inicializada correctamente")}catch(o){console.error("Error al inicializar la aplicaci\xf3n:",o),(0,s.Qg)("Error al inicializar la aplicaci\xf3n")}finally{i(!1)}}})(),()=>{window.syncService&&window.syncService.stopSync()})),[r,l]),(0,e.useEffect)((()=>{(async()=>{if(o&&l)try{console.log("Sincronizando datos del usuario..."),(0,s.cf)("Sincronizando datos...");const r=await(0,t.kO)(o.id);r.success?(console.log("Datos sincronizados correctamente:",r),(0,s.cf)("Datos sincronizados correctamente")):(console.warn("Advertencia al sincronizar datos:",r),(0,s.cf)("Algunos datos no pudieron sincronizarse"))}catch(r){console.error("Error al sincronizar datos del usuario:",r),(0,s.Qg)("Error al sincronizar datos")}})()}),[o,l]),(0,d.jsx)(u,{visible:r,children:"Inicializando aplicaci\xf3n..."})}},6823:(o,r,i)=>{i.d(r,{GT:()=>u,HN:()=>t,Lz:()=>c,mT:()=>n});const e=()=>"Notification"in window,a=()=>"serviceWorker"in navigator,n=async()=>{if(!e())return console.warn("Las notificaciones no son soportadas en este navegador"),"not-supported";try{return await Notification.requestPermission()}catch(o){return console.error("Error al solicitar permiso para notificaciones:",o),"error"}},t=()=>e()?Notification.permission:"not-supported",c=async()=>{if(!a())return console.warn("Service Worker no es soportado en este navegador"),null;try{const o=await navigator.serviceWorker.register("/service-worker.js");return console.log("Service Worker registrado con \xe9xito:",o),o}catch(o){return console.error("Error al registrar el Service Worker:",o),null}},s=async function(o){let r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};if("granted"!==t())return console.warn("No se tiene permiso para mostrar notificaciones"),null;try{if(a()&&navigator.serviceWorker.controller){const i=await navigator.serviceWorker.ready;return await i.showNotification(o,r),!0}return new Notification(o,r)}catch(i){return console.error("Error al mostrar notificaci\xf3n:",i),null}},l=()=>{try{const o=localStorage.getItem("scheduledNotifications");return o?JSON.parse(o):[]}catch(o){return console.error("Error al obtener notificaciones programadas:",o),[]}},d=o=>{try{const r=l().filter((r=>r.id!==o));return localStorage.setItem("scheduledNotifications",JSON.stringify(r)),!0}catch(r){return console.error("Error al eliminar notificaci\xf3n programada:",r),!1}},u=()=>{try{const o=l(),r=new Date;o.forEach((o=>{const i=new Date(o.scheduledTime).getTime()-r.getTime();i<=0?(s(o.title,o.options),d(o.id)):setTimeout((()=>{s(o.title,o.options),d(o.id)}),i)}))}catch(o){console.error("Error al verificar notificaciones programadas:",o)}}}}]);
+//# sourceMappingURL=962.34644a92.chunk.js.map
