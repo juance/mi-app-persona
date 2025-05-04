@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/mi-app-personal/static/css/main.e74b0b63.css",
-    "main.js": "/mi-app-personal/static/js/main.5aca1222.js",
+    "main.js": "/mi-app-personal/static/js/main.af1c2426.js",
     "static/js/479.35d2a02b.chunk.js": "/mi-app-personal/static/js/479.35d2a02b.chunk.js",
     "static/js/659.17fe9fac.chunk.js": "/mi-app-personal/static/js/659.17fe9fac.chunk.js",
     "static/js/947.c21d22f5.chunk.js": "/mi-app-personal/static/js/947.c21d22f5.chunk.js",
@@ -39,7 +39,7 @@
     "static/media/poppins-latin-ext-700-normal.woff2": "/mi-app-personal/static/media/poppins-latin-ext-700-normal.51cc1e159ae5f0b8ec5c.woff2",
     "index.html": "/mi-app-personal/index.html",
     "main.e74b0b63.css.map": "/mi-app-personal/static/css/main.e74b0b63.css.map",
-    "main.5aca1222.js.map": "/mi-app-personal/static/js/main.5aca1222.js.map",
+    "main.af1c2426.js.map": "/mi-app-personal/static/js/main.af1c2426.js.map",
     "479.35d2a02b.chunk.js.map": "/mi-app-personal/static/js/479.35d2a02b.chunk.js.map",
     "659.17fe9fac.chunk.js.map": "/mi-app-personal/static/js/659.17fe9fac.chunk.js.map",
     "947.c21d22f5.chunk.js.map": "/mi-app-personal/static/js/947.c21d22f5.chunk.js.map",
@@ -58,6 +58,6 @@
   },
   "entrypoints": [
     "static/css/main.e74b0b63.css",
-    "static/js/main.5aca1222.js"
+    "static/js/main.af1c2426.js"
   ]
 }
