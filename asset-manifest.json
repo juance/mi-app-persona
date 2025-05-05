@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/mi-app-persona/static/css/main.8b080a66.css",
-    "main.js": "/mi-app-persona/static/js/main.bd1eb6f3.js",
-    "static/js/195.9001d2a7.chunk.js": "/mi-app-persona/static/js/195.9001d2a7.chunk.js",
+    "main.js": "/mi-app-persona/static/js/main.a0be0e96.js",
+    "static/js/604.9996142c.chunk.js": "/mi-app-persona/static/js/604.9996142c.chunk.js",
     "static/js/659.5e2534be.chunk.js": "/mi-app-persona/static/js/659.5e2534be.chunk.js",
     "static/js/84.115a1f67.chunk.js": "/mi-app-persona/static/js/84.115a1f67.chunk.js",
     "static/js/138.ddaacf8e.chunk.js": "/mi-app-persona/static/js/138.ddaacf8e.chunk.js",
@@ -41,8 +41,8 @@
     "static/media/poppins-latin-ext-700-normal.woff2": "/mi-app-persona/static/media/poppins-latin-ext-700-normal.51cc1e159ae5f0b8ec5c.woff2",
     "index.html": "/mi-app-persona/index.html",
     "main.8b080a66.css.map": "/mi-app-persona/static/css/main.8b080a66.css.map",
-    "main.bd1eb6f3.js.map": "/mi-app-persona/static/js/main.bd1eb6f3.js.map",
-    "195.9001d2a7.chunk.js.map": "/mi-app-persona/static/js/195.9001d2a7.chunk.js.map",
+    "main.a0be0e96.js.map": "/mi-app-persona/static/js/main.a0be0e96.js.map",
+    "604.9996142c.chunk.js.map": "/mi-app-persona/static/js/604.9996142c.chunk.js.map",
     "659.5e2534be.chunk.js.map": "/mi-app-persona/static/js/659.5e2534be.chunk.js.map",
     "84.115a1f67.chunk.js.map": "/mi-app-persona/static/js/84.115a1f67.chunk.js.map",
     "138.ddaacf8e.chunk.js.map": "/mi-app-persona/static/js/138.ddaacf8e.chunk.js.map",
@@ -62,6 +62,6 @@
   },
   "entrypoints": [
     "static/css/main.8b080a66.css",
-    "static/js/main.bd1eb6f3.js"
+    "static/js/main.a0be0e96.js"
   ]
 }
