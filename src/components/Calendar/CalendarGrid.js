@@ -6,45 +6,59 @@ const CalendarContainer = styled.div`
   background-color: var(--card-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--card-shadow);
-  padding: 16px;
-  margin-bottom: 24px;
-  max-width: 800px;
+  padding: 12px;
+  margin-bottom: 20px;
+  max-width: 700px;
   margin-left: auto;
   margin-right: auto;
+
+  @media (max-width: 768px) {
+    padding: 8px;
+    margin-bottom: 16px;
+  }
 `;
 
 const CalendarHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 8px;
+  }
 `;
 
 const MonthNavigation = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 `;
 
 const MonthTitle = styled.h2`
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-dark);
-  min-width: 180px;
+  min-width: 150px;
   text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    min-width: 120px;
+  }
 `;
 
 const NavButton = styled.button`
   background: none;
   border: none;
   color: var(--text-medium);
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  padding: 4px;
   border-radius: 50%;
   transition: all var(--transition-speed);
 
@@ -52,34 +66,45 @@ const NavButton = styled.button`
     color: var(--primary-color);
     background-color: rgba(99, 102, 241, 0.1);
   }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    padding: 3px;
+  }
 `;
 
 const TodayButton = styled.button`
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 6px 12px;
+  padding: 4px 8px;
   border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 500;
   transition: all var(--transition-speed);
 
   &:hover {
     background-color: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    padding: 3px 6px;
+    font-size: 0.7rem;
   }
 `;
 
 const WeekdaysRow = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 4px;
+  margin-bottom: 4px;
 
   @media (max-width: 768px) {
-    gap: 3px;
+    gap: 2px;
+    margin-bottom: 2px;
   }
 `;
 
@@ -87,24 +112,29 @@ const Weekday = styled.div`
   text-align: center;
   font-weight: 600;
   color: var(--text-medium);
-  padding: 6px 4px;
-  font-size: 0.8rem;
+  padding: 4px 2px;
+  font-size: 0.7rem;
+
+  @media (max-width: 768px) {
+    padding: 2px 1px;
+    font-size: 0.65rem;
+  }
 `;
 
 const DaysGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+  gap: 4px;
 
   @media (max-width: 768px) {
-    gap: 3px;
+    gap: 2px;
   }
 `;
 
 const DayCell = styled.div`
   aspect-ratio: 1;
   border-radius: var(--border-radius);
-  padding: 6px 4px;
+  padding: 4px 2px;
   cursor: pointer;
   position: relative;
   background-color: ${props => {
@@ -127,22 +157,23 @@ const DayCell = styled.div`
       : 'rgba(99, 102, 241, 0.1)'
     };
     transform: translateY(-1px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
   @media (max-width: 768px) {
-    padding: 3px 2px;
+    padding: 2px 1px;
+    border-radius: 4px;
   }
 `;
 
 const DayNumber = styled.div`
-  font-size: 0.85rem;
-  margin-bottom: 2px;
+  font-size: 0.75rem;
+  margin-bottom: 1px;
   text-align: center;
 
   @media (max-width: 768px) {
-    font-size: 0.75rem;
-    margin-bottom: 1px;
+    font-size: 0.7rem;
+    margin-bottom: 0;
   }
 `;
 
@@ -151,11 +182,17 @@ const EventIndicatorsContainer = styled.div`
   flex-wrap: wrap;
   gap: 1px;
   justify-content: center;
+  max-height: 8px;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    max-height: 6px;
+  }
 `;
 
 const EventIndicator = styled.div`
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
   border-radius: 50%;
   background-color: ${props => {
     switch (props.category) {
@@ -169,8 +206,8 @@ const EventIndicator = styled.div`
   }};
 
   @media (max-width: 768px) {
-    width: 3px;
-    height: 3px;
+    width: 2px;
+    height: 2px;
   }
 `;
 

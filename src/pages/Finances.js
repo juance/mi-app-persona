@@ -64,7 +64,7 @@ const TransactionsHeaderActions = styled.div`
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid var(--bg-medium);
 
   @media (max-width: 768px) {
     flex-direction: column;
