@@ -15,7 +15,7 @@ const ConvertedAmount = styled.span`
   color: var(--text-medium);
   cursor: pointer;
   transition: all var(--transition-speed);
-  
+
   &:hover {
     color: var(--primary-color);
   }
@@ -38,7 +38,7 @@ const ExchangeRateTooltip = styled.div`
 const RefreshIcon = styled(FiRefreshCw)`
   font-size: 0.9rem;
   animation: ${props => props.isLoading ? 'spin 1s linear infinite' : 'none'};
-  
+
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -58,16 +58,16 @@ const CurrencyConverter = ({ amount, fromCurrency, toCurrency }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
   const [exchangeRate, setExchangeRate] = useState(null);
-  
+
   useEffect(() => {
     const fetchConvertedAmount = async () => {
       try {
         setIsLoading(true);
-        
+
         // Obtener tasa de cambio
         const rate = await getExchangeRate(fromCurrency, toCurrency);
         setExchangeRate(rate);
-        
+
         // Convertir monto
         const converted = await convertCurrency(amount, fromCurrency, toCurrency);
         setConvertedAmount(converted);
@@ -77,23 +77,23 @@ const CurrencyConverter = ({ amount, fromCurrency, toCurrency }) => {
         setIsLoading(false);
       }
     };
-    
+
     fetchConvertedAmount();
   }, [amount, fromCurrency, toCurrency]);
-  
+
   const handleRefresh = async (e) => {
     e.stopPropagation();
-    
+
     try {
       setIsLoading(true);
-      
+
       // Forzar actualización de tasas (no usar caché)
       localStorage.removeItem('exchange_rates');
-      
+
       // Obtener tasa de cambio
       const rate = await getExchangeRate(fromCurrency, toCurrency);
       setExchangeRate(rate);
-      
+
       // Convertir monto
       const converted = await convertCurrency(amount, fromCurrency, toCurrency);
       setConvertedAmount(converted);
@@ -103,33 +103,55 @@ const CurrencyConverter = ({ amount, fromCurrency, toCurrency }) => {
       setIsLoading(false);
     }
   };
-  
+
   if (fromCurrency === toCurrency) {
     return null;
   }
-  
+
   return (
     <ConverterContainer>
-      <ConvertedAmount 
+      <ConvertedAmount
         onClick={() => setShowTooltip(!showTooltip)}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
+        role="button"
+        tabIndex={0}
+        aria-label={`Valor convertido: ${convertedAmount ? formatCurrency(convertedAmount, toCurrency) : 'Cargando...'}`}
+        aria-expanded={showTooltip}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            setShowTooltip(!showTooltip);
+            e.preventDefault();
+          }
+        }}
       >
         {isLoading ? (
-          <RefreshIcon isLoading={true} />
+          <RefreshIcon isLoading={true} aria-hidden="true" />
         ) : (
           <>
             ({formatCurrency(convertedAmount, toCurrency)})
-            <RefreshIcon 
-              onClick={handleRefresh} 
+            <RefreshIcon
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRefresh(e);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleRefresh(e);
+                  e.preventDefault();
+                }
+              }}
               style={{ marginLeft: '4px', cursor: 'pointer' }}
+              role="button"
+              tabIndex={0}
+              aria-label="Actualizar tasa de cambio"
             />
           </>
         )}
       </ConvertedAmount>
-      
+
       {showTooltip && exchangeRate && (
-        <ExchangeRateTooltip>
+        <ExchangeRateTooltip role="tooltip">
           1 {fromCurrency} = {exchangeRate.toFixed(2)} {toCurrency}
         </ExchangeRateTooltip>
       )}

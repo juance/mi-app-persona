@@ -6,29 +6,32 @@ const CalendarContainer = styled.div`
   background-color: var(--card-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--card-shadow);
-  padding: 24px;
-  margin-bottom: 32px;
+  padding: 16px;
+  margin-bottom: 24px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const CalendarHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 `;
 
 const MonthNavigation = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 `;
 
 const MonthTitle = styled.h2`
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 600;
   color: var(--text-dark);
-  min-width: 200px;
+  min-width: 180px;
   text-align: center;
 `;
 
@@ -36,12 +39,12 @@ const NavButton = styled.button`
   background: none;
   border: none;
   color: var(--text-medium);
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 6px;
   border-radius: 50%;
   transition: all var(--transition-speed);
 
@@ -55,10 +58,10 @@ const TodayButton = styled.button`
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   transition: all var(--transition-speed);
 
@@ -72,11 +75,11 @@ const TodayButton = styled.button`
 const WeekdaysRow = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 6px;
 
   @media (max-width: 768px) {
-    gap: 4px;
+    gap: 3px;
   }
 `;
 
@@ -84,24 +87,24 @@ const Weekday = styled.div`
   text-align: center;
   font-weight: 600;
   color: var(--text-medium);
-  padding: 8px;
-  font-size: 0.9rem;
+  padding: 6px 4px;
+  font-size: 0.8rem;
 `;
 
 const DaysGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 6px;
 
   @media (max-width: 768px) {
-    gap: 4px;
+    gap: 3px;
   }
 `;
 
 const DayCell = styled.div`
   aspect-ratio: 1;
   border-radius: var(--border-radius);
-  padding: 8px;
+  padding: 6px 4px;
   cursor: pointer;
   position: relative;
   background-color: ${props => {
@@ -123,35 +126,36 @@ const DayCell = styled.div`
       ? 'rgba(99, 102, 241, 0.2)'
       : 'rgba(99, 102, 241, 0.1)'
     };
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   @media (max-width: 768px) {
-    padding: 4px;
+    padding: 3px 2px;
   }
 `;
 
 const DayNumber = styled.div`
-  font-size: 0.9rem;
-  margin-bottom: 4px;
+  font-size: 0.85rem;
+  margin-bottom: 2px;
   text-align: center;
 
   @media (max-width: 768px) {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    margin-bottom: 1px;
   }
 `;
 
 const EventIndicatorsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 2px;
+  gap: 1px;
   justify-content: center;
 `;
 
 const EventIndicator = styled.div`
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background-color: ${props => {
     switch (props.category) {
@@ -163,6 +167,11 @@ const EventIndicator = styled.div`
       default: return 'var(--text-light)';
     }
   }};
+
+  @media (max-width: 768px) {
+    width: 3px;
+    height: 3px;
+  }
 `;
 
 const CalendarGrid = ({ events, onSelectDate }) => {

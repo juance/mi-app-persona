@@ -15,7 +15,7 @@ import {
   Filler
 } from 'chart.js';
 import { Line, Bar, Pie, Doughnut, PolarArea } from 'react-chartjs-2';
-import { FiBarChart2, FiPieChart, FiTrendingUp, FiCalendar, FiFilter } from 'react-icons/fi';
+import { FiBarChart2, FiPieChart, FiTrendingUp } from 'react-icons/fi';
 import { getTransactions } from '../../services/transactionService';
 import LoadingSpinner from '../common/LoadingSpinner';
 import AnimatedButton from '../common/AnimatedButton';

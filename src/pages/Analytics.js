@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FiBarChart2, FiTrendingUp, FiMessageSquare } from 'react-icons/fi';
+import { FiBarChart2, FiTrendingUp, FiMessageSquare, FiDollarSign } from 'react-icons/fi';
 import FinancialAnalytics from '../components/Analytics/FinancialAnalytics';
 import PredictiveAnalytics from '../components/Analytics/PredictiveAnalytics';
 import PersonalizedRecommendations from '../components/Analytics/PersonalizedRecommendations';
+import ExchangeRateHistory from '../components/Analytics/ExchangeRateHistory';
 
 const AnalyticsContainer = styled.div`
   max-width: 1200px;
@@ -95,6 +96,8 @@ const Analytics = () => {
         return <PredictiveAnalytics />;
       case 'recommendations':
         return <PersonalizedRecommendations />;
+      case 'exchange':
+        return <ExchangeRateHistory />;
       default:
         return <FinancialAnalytics />;
     }
@@ -125,6 +128,12 @@ const Analytics = () => {
           onClick={() => setActiveTab('recommendations')}
         >
           <FiMessageSquare /> Recomendaciones
+        </Tab>
+        <Tab
+          active={activeTab === 'exchange'}
+          onClick={() => setActiveTab('exchange')}
+        >
+          <FiDollarSign /> Tasas de Cambio
         </Tab>
       </TabsContainer>
 
