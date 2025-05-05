@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FiTrendingUp, FiRefreshCw, FiAlertCircle, FiCheckCircle, FiInfo } from 'react-icons/fi';
 import { Line } from 'react-chartjs-2';
-import { 
-  predictExpenses, 
-  predictIncome, 
-  predictBalance, 
+import {
+  predictExpenses,
+  predictIncome,
+  predictBalance,
   predictCashFlow,
   detectRecurringPatterns
 } from '../../services/predictiveAnalysisService';
@@ -15,11 +15,12 @@ import { showError } from '../common/Notification';
 
 // Estilos
 const PredictiveContainer = styled.div`
-  background-color: var(--card-bg);
+  background-color: #1e1e1e;
   border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   padding: 24px;
   margin-bottom: 32px;
+  color: #ffffff;
 `;
 
 const PredictiveHeader = styled.div`
@@ -28,8 +29,8 @@ const PredictiveHeader = styled.div`
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  
+  border-bottom: 1px solid var(--bg-medium);
+
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
@@ -39,13 +40,13 @@ const PredictiveHeader = styled.div`
 
 const PredictiveTitle = styled.h2`
   margin: 0;
-  color: var(--text-dark);
+  color: #ffffff;
   font-size: 1.5rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 12px;
-  
+
   svg {
     color: var(--primary-color);
   }
@@ -55,8 +56,8 @@ const TabsContainer = styled.div`
   display: flex;
   gap: 16px;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  
+  border-bottom: 1px solid var(--bg-medium);
+
   @media (max-width: 768px) {
     overflow-x: auto;
     padding-bottom: 8px;
@@ -69,12 +70,12 @@ const Tab = styled.button`
   border: none;
   padding: 8px 16px;
   font-size: 1rem;
-  color: ${props => props.active ? 'var(--primary-color)' : 'var(--text-medium)'};
+  color: ${props => props.active ? 'var(--primary-color)' : '#cccccc'};
   font-weight: ${props => props.active ? '600' : '400'};
   border-bottom: 2px solid ${props => props.active ? 'var(--primary-color)' : 'transparent'};
   cursor: pointer;
   transition: all 0.3s;
-  
+
   &:hover {
     color: var(--primary-color);
   }
@@ -88,9 +89,9 @@ const ChartContainer = styled.div`
 `;
 
 const PredictionCard = styled.div`
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: var(--border-radius);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--card-shadow);
   padding: 16px;
   margin-bottom: 16px;
   border-left: 4px solid ${props => props.color || 'var(--primary-color)'};
@@ -99,11 +100,11 @@ const PredictionCard = styled.div`
 const PredictionTitle = styled.h3`
   margin: 0 0 8px 0;
   font-size: 1.1rem;
-  color: var(--text-dark);
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   svg {
     color: ${props => props.color || 'var(--primary-color)'};
   }
@@ -112,7 +113,7 @@ const PredictionTitle = styled.h3`
 const PredictionContent = styled.div`
   margin-bottom: 8px;
   font-size: 0.95rem;
-  color: var(--text-medium);
+  color: #cccccc;
   line-height: 1.5;
 `;
 
@@ -133,13 +134,13 @@ const PredictionGrid = styled.div`
 const EmptyState = styled.div`
   text-align: center;
   padding: 48px 24px;
-  color: var(--text-medium);
-  
+  color: #cccccc;
+
   h4 {
     margin-bottom: 16px;
-    color: var(--text-dark);
+    color: #ffffff;
   }
-  
+
   p {
     margin-bottom: 24px;
   }
@@ -152,16 +153,38 @@ const chartOptions = {
   plugins: {
     legend: {
       position: 'top',
+      labels: {
+        color: '#ffffff'
+      }
     },
     tooltip: {
       mode: 'index',
       intersect: false,
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: '#ffffff',
+      bodyColor: '#ffffff',
+      borderColor: 'rgba(255, 255, 255, 0.2)',
+      borderWidth: 1
     },
   },
   scales: {
     y: {
       beginAtZero: true,
+      grid: {
+        color: 'rgba(255, 255, 255, 0.1)'
+      },
+      ticks: {
+        color: '#cccccc'
+      }
     },
+    x: {
+      grid: {
+        color: 'rgba(255, 255, 255, 0.1)'
+      },
+      ticks: {
+        color: '#cccccc'
+      }
+    }
   },
 };
 
@@ -180,13 +203,13 @@ const PredictiveAnalytics = () => {
     patterns: []
   });
   const [hasData, setHasData] = useState(false);
-  
+
   // Cargar predicciones
   useEffect(() => {
     const loadPredictions = async () => {
       try {
         setLoading(true);
-        
+
         // Cargar todas las predicciones en paralelo
         const [expenses, income, balance, cashFlow, patterns] = await Promise.all([
           predictExpenses(6),
@@ -195,7 +218,7 @@ const PredictiveAnalytics = () => {
           predictCashFlow(6),
           detectRecurringPatterns()
         ]);
-        
+
         setPredictions({
           expenses,
           income,
@@ -203,12 +226,12 @@ const PredictiveAnalytics = () => {
           cashFlow,
           patterns
         });
-        
+
         // Verificar si hay suficientes datos para mostrar predicciones
         setHasData(
-          expenses.length > 0 || 
-          income.length > 0 || 
-          balance.length > 0 || 
+          expenses.length > 0 ||
+          income.length > 0 ||
+          balance.length > 0 ||
           cashFlow.predictions.length > 0 ||
           patterns.length > 0
         );
@@ -220,10 +243,10 @@ const PredictiveAnalytics = () => {
         setLoading(false);
       }
     };
-    
+
     loadPredictions();
   }, []);
-  
+
   // Formatear moneda
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('es-AR', {
@@ -231,7 +254,7 @@ const PredictiveAnalytics = () => {
       currency: 'ARS',
     }).format(amount);
   };
-  
+
   // Preparar datos para el gráfico de flujo de caja
   const cashFlowChartData = {
     labels: predictions.cashFlow.predictions.map(p => p.month),
@@ -240,7 +263,7 @@ const PredictiveAnalytics = () => {
         label: 'Balance Final',
         data: predictions.cashFlow.predictions.map(p => p.endingBalance),
         borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        backgroundColor: 'rgba(75, 192, 192, 0.3)',
         fill: true,
         tension: 0.4,
       },
@@ -248,7 +271,7 @@ const PredictiveAnalytics = () => {
         label: 'Ingresos',
         data: predictions.cashFlow.predictions.map(p => p.income),
         borderColor: 'rgba(54, 162, 235, 1)',
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        backgroundColor: 'rgba(54, 162, 235, 0.3)',
         borderDash: [5, 5],
         tension: 0.4,
       },
@@ -256,13 +279,13 @@ const PredictiveAnalytics = () => {
         label: 'Gastos',
         data: predictions.cashFlow.predictions.map(p => p.expense),
         borderColor: 'rgba(255, 99, 132, 1)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        backgroundColor: 'rgba(255, 99, 132, 0.3)',
         borderDash: [5, 5],
         tension: 0.4,
       },
     ],
   };
-  
+
   // Preparar datos para el gráfico de ingresos y gastos
   const incomeExpenseChartData = {
     labels: predictions.balance.map(p => p.month),
@@ -271,7 +294,7 @@ const PredictiveAnalytics = () => {
         label: 'Ingresos Previstos',
         data: predictions.balance.map(p => p.income),
         borderColor: 'rgba(54, 162, 235, 1)',
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        backgroundColor: 'rgba(54, 162, 235, 0.3)',
         fill: true,
         tension: 0.4,
       },
@@ -279,19 +302,19 @@ const PredictiveAnalytics = () => {
         label: 'Gastos Previstos',
         data: predictions.balance.map(p => p.expense),
         borderColor: 'rgba(255, 99, 132, 1)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        backgroundColor: 'rgba(255, 99, 132, 0.3)',
         fill: true,
         tension: 0.4,
       },
     ],
   };
-  
+
   // Renderizar contenido según la pestaña activa
   const renderContent = () => {
     if (loading) {
       return <LoadingSpinner text="Calculando predicciones..." />;
     }
-    
+
     if (!hasData) {
       return (
         <EmptyState>
@@ -303,7 +326,7 @@ const PredictiveAnalytics = () => {
         </EmptyState>
       );
     }
-    
+
     switch (activeTab) {
       case 'cashflow':
         return (
@@ -316,15 +339,15 @@ const PredictiveAnalytics = () => {
                 Basado en tus patrones de ingresos y gastos, así es como podría evolucionar tu balance en los próximos meses.
               </PredictionContent>
             </PredictionCard>
-            
+
             <ChartContainer>
               <Line data={cashFlowChartData} options={chartOptions} />
             </ChartContainer>
-            
+
             <PredictionGrid>
               {predictions.cashFlow.predictions.map((prediction, index) => (
-                <PredictionCard 
-                  key={index} 
+                <PredictionCard
+                  key={index}
                   color={prediction.balance >= 0 ? "var(--success-color)" : "var(--danger-color)"}
                 >
                   <PredictionTitle>
@@ -346,7 +369,7 @@ const PredictiveAnalytics = () => {
             </PredictionGrid>
           </>
         );
-      
+
       case 'income-expense':
         return (
           <>
@@ -358,15 +381,15 @@ const PredictiveAnalytics = () => {
                 Proyección de tus ingresos y gastos para los próximos meses, basada en tus patrones históricos.
               </PredictionContent>
             </PredictionCard>
-            
+
             <ChartContainer>
               <Line data={incomeExpenseChartData} options={chartOptions} />
             </ChartContainer>
-            
+
             <PredictionGrid>
               {predictions.balance.map((prediction, index) => (
-                <PredictionCard 
-                  key={index} 
+                <PredictionCard
+                  key={index}
                   color={prediction.balance >= 0 ? "var(--success-color)" : "var(--danger-color)"}
                 >
                   <PredictionTitle>
@@ -387,7 +410,7 @@ const PredictiveAnalytics = () => {
             </PredictionGrid>
           </>
         );
-      
+
       case 'patterns':
         return (
           <>
@@ -399,12 +422,12 @@ const PredictiveAnalytics = () => {
                 Hemos identificado estos patrones recurrentes en tus transacciones que podrían ser pagos o ingresos periódicos.
               </PredictionContent>
             </PredictionCard>
-            
+
             {predictions.patterns.length > 0 ? (
               <PredictionGrid>
                 {predictions.patterns.map((pattern, index) => (
-                  <PredictionCard 
-                    key={index} 
+                  <PredictionCard
+                    key={index}
                     color={pattern.avgAmount > 0 ? "var(--success-color)" : "var(--danger-color)"}
                   >
                     <PredictionTitle>
@@ -432,12 +455,12 @@ const PredictiveAnalytics = () => {
             )}
           </>
         );
-      
+
       default:
         return <div>Selecciona una pestaña para ver las predicciones</div>;
     }
   };
-  
+
   return (
     <PredictiveContainer>
       <PredictiveHeader>
@@ -452,7 +475,7 @@ const PredictiveAnalytics = () => {
           <FiRefreshCw /> Actualizar
         </AnimatedButton>
       </PredictiveHeader>
-      
+
       <TabsContainer>
         <Tab
           active={activeTab === 'cashflow'}
@@ -473,7 +496,7 @@ const PredictiveAnalytics = () => {
           Patrones Recurrentes
         </Tab>
       </TabsContainer>
-      
+
       {renderContent()}
     </PredictiveContainer>
   );
