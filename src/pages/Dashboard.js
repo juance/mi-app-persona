@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FiCheckSquare, FiDollarSign, FiTrendingUp, FiTarget, FiCalendar } from 'react-icons/fi';
+import { FiCheckSquare, FiDollarSign, FiTrendingUp, FiTarget, FiCalendar, FiDatabase } from 'react-icons/fi';
+import SyncForceButton from '../components/common/SyncForceButton';
 
 const DashboardContainer = styled.div`
   max-width: 1200px;
@@ -136,6 +137,7 @@ const Dashboard = () => {
           Esta aplicación te ayudará a gestionar tus tareas, finanzas, inversiones, metas financieras y calendario en un solo lugar.
           Explora los diferentes módulos para comenzar a organizar tu vida personal.
         </WelcomeText>
+        <SyncForceButton />
       </WelcomeSection>
 
       <ModulesGrid>
@@ -177,6 +179,14 @@ const Dashboard = () => {
           </ModuleIcon>
           <ModuleTitle>Calendario</ModuleTitle>
           <ModuleDescription>Organiza tus eventos y citas</ModuleDescription>
+        </ModuleCard>
+
+        <ModuleCard as="div" onClick={() => document.querySelector('.sync-force-button').click()}>
+          <ModuleIcon>
+            <FiDatabase />
+          </ModuleIcon>
+          <ModuleTitle>Sincronización</ModuleTitle>
+          <ModuleDescription>Sincroniza tus datos entre dispositivos</ModuleDescription>
         </ModuleCard>
       </ModulesGrid>
     </DashboardContainer>

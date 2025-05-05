@@ -455,7 +455,7 @@ export const syncAllUserData = async (userId, force = false) => {
     return { success: false, message: 'No se proporcionó ID de usuario' };
   }
 
-  console.log(`Iniciando sincronización completa para el usuario ${userId}`);
+  console.log(`Iniciando sincronización completa para el usuario ${userId}${force ? ' (forzada)' : ''}`);
 
   try {
     // Lista de almacenes a sincronizar
@@ -467,6 +467,148 @@ export const syncAllUserData = async (userId, force = false) => {
       'categories',
       'platforms'
     ];
+
+    // Si es una sincronización forzada, primero intentamos enviar los datos locales al servidor
+    if (force) {
+      console.log('Sincronización forzada: enviando datos locales al servidor primero');
+
+      try {
+        // Obtener datos del almacenamiento local simple
+        const { getTransactions, getTasks, getInvestments, getFinancialGoals, getEvents } = await import('./simpleStorage');
+
+        // Transacciones
+        const localTransactions = getTransactions();
+        if (localTransactions && localTransactions.length > 0) {
+          console.log(`Enviando ${localTransactions.length} transacciones al servidor...`);
+
+          // Asegurarse de que todas las transacciones tengan user_id
+          const transactionsWithUserId = localTransactions.map(t => ({
+            ...t,
+            user_id: t.user_id || userId
+          }));
+
+          // Usar upsert para insertar o actualizar
+          const { error } = await supabase
+            .from('transactions')
+            .upsert(transactionsWithUserId, {
+              onConflict: 'id',
+              ignoreDuplicates: false
+            });
+
+          if (error) {
+            console.error('Error al sincronizar transacciones con el servidor:', error);
+          } else {
+            console.log('Transacciones sincronizadas con el servidor correctamente');
+          }
+        }
+
+        // Tareas
+        const localTasks = getTasks();
+        if (localTasks && localTasks.length > 0) {
+          console.log(`Enviando ${localTasks.length} tareas al servidor...`);
+
+          // Asegurarse de que todas las tareas tengan user_id
+          const tasksWithUserId = localTasks.map(t => ({
+            ...t,
+            user_id: t.user_id || userId
+          }));
+
+          // Usar upsert para insertar o actualizar
+          const { error } = await supabase
+            .from('tasks')
+            .upsert(tasksWithUserId, {
+              onConflict: 'id',
+              ignoreDuplicates: false
+            });
+
+          if (error) {
+            console.error('Error al sincronizar tareas con el servidor:', error);
+          } else {
+            console.log('Tareas sincronizadas con el servidor correctamente');
+          }
+        }
+
+        // Inversiones
+        const localInvestments = getInvestments();
+        if (localInvestments && localInvestments.length > 0) {
+          console.log(`Enviando ${localInvestments.length} inversiones al servidor...`);
+
+          // Asegurarse de que todas las inversiones tengan user_id
+          const investmentsWithUserId = localInvestments.map(i => ({
+            ...i,
+            user_id: i.user_id || userId
+          }));
+
+          // Usar upsert para insertar o actualizar
+          const { error } = await supabase
+            .from('investments')
+            .upsert(investmentsWithUserId, {
+              onConflict: 'id',
+              ignoreDuplicates: false
+            });
+
+          if (error) {
+            console.error('Error al sincronizar inversiones con el servidor:', error);
+          } else {
+            console.log('Inversiones sincronizadas con el servidor correctamente');
+          }
+        }
+
+        // Metas financieras
+        const localGoals = getFinancialGoals();
+        if (localGoals && localGoals.length > 0) {
+          console.log(`Enviando ${localGoals.length} metas financieras al servidor...`);
+
+          // Asegurarse de que todas las metas tengan user_id
+          const goalsWithUserId = localGoals.map(g => ({
+            ...g,
+            user_id: g.user_id || userId
+          }));
+
+          // Usar upsert para insertar o actualizar
+          const { error } = await supabase
+            .from('financial_goals')
+            .upsert(goalsWithUserId, {
+              onConflict: 'id',
+              ignoreDuplicates: false
+            });
+
+          if (error) {
+            console.error('Error al sincronizar metas financieras con el servidor:', error);
+          } else {
+            console.log('Metas financieras sincronizadas con el servidor correctamente');
+          }
+        }
+
+        // Eventos
+        const localEvents = getEvents();
+        if (localEvents && localEvents.length > 0) {
+          console.log(`Enviando ${localEvents.length} eventos al servidor...`);
+
+          // Asegurarse de que todos los eventos tengan user_id
+          const eventsWithUserId = localEvents.map(e => ({
+            ...e,
+            user_id: e.user_id || userId
+          }));
+
+          // Usar upsert para insertar o actualizar
+          const { error } = await supabase
+            .from('events')
+            .upsert(eventsWithUserId, {
+              onConflict: 'id',
+              ignoreDuplicates: false
+            });
+
+          if (error) {
+            console.error('Error al sincronizar eventos con el servidor:', error);
+          } else {
+            console.log('Eventos sincronizados con el servidor correctamente');
+          }
+        }
+      } catch (error) {
+        console.error('Error al enviar datos locales al servidor:', error);
+      }
+    }
 
     // Sincronizar cada almacén
     const results = await Promise.allSettled([
