@@ -9,6 +9,7 @@ import StockTracker from '../components/Investments/StockTracker';
 import FinancialNews from '../components/Investments/FinancialNews';
 import ChatBot from '../components/ChatBot/ChatBot';
 import AnimatedButton from '../components/common/AnimatedButton';
+import { showInfo } from '../components/common/Notification';
 import { getInvestments, saveInvestments, addInvestment, updateInvestment, deleteInvestment } from '../services/simpleStorage';
 
 const InvestmentsContainer = styled.div`
@@ -147,6 +148,28 @@ const Investments = () => {
     };
 
     loadInvestments();
+
+    // Escuchar eventos de sincronización
+    const handleDataSynced = (event) => {
+      const { detail } = event;
+      if (detail.success && detail.stores && detail.stores.includes('investments')) {
+        console.log('Datos de inversiones sincronizados, recargando...');
+        // Recargar inversiones desde el almacenamiento local
+        const syncedData = getInvestments();
+        if (syncedData && syncedData.length > 0) {
+          console.log('Inversiones actualizadas desde sincronización:', syncedData.length);
+          setInvestments(syncedData);
+          showInfo('Inversiones actualizadas');
+        }
+      }
+    };
+
+    window.addEventListener('data-synced', handleDataSynced);
+
+    // Limpiar suscripciones al desmontar
+    return () => {
+      window.removeEventListener('data-synced', handleDataSynced);
+    };
   }, []);
 
   // Aplicar filtros y ordenamiento cuando cambian los filtros o las inversiones

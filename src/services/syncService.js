@@ -446,9 +446,10 @@ export const syncFromServer = async (storeName, tableName = null, options = {}) 
 /**
  * Sincronizar todos los datos del usuario desde el servidor
  * @param {string} userId - ID del usuario
+ * @param {boolean} force - Forzar sincronización completa
  * @returns {Promise<Object>} - Resultado de la sincronización
  */
-export const syncAllUserData = async (userId) => {
+export const syncAllUserData = async (userId, force = false) => {
   if (!userId) {
     console.error('No se proporcionó ID de usuario para sincronización');
     return { success: false, message: 'No se proporcionó ID de usuario' };
@@ -462,7 +463,9 @@ export const syncAllUserData = async (userId) => {
       'tasks',
       'events',
       'investments',
-      'financial_goals'
+      'financial_goals',
+      'categories',
+      'platforms'
     ];
 
     // Sincronizar cada almacén
@@ -473,14 +476,14 @@ export const syncAllUserData = async (userId) => {
       ...stores.map(store =>
         syncFromServer(store, null, {
           userId,
-          clearBeforeSync: true
+          clearBeforeSync: force // Solo limpiar si se fuerza la sincronización
         })
       )
     ]);
 
     // Contar resultados
-    const succeeded = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
-    const failed = results.filter(r => r.status === 'rejected' || !r.value.success).length;
+    const succeeded = results.filter(r => r.status === 'fulfilled' && r.value && r.value.success).length;
+    const failed = results.filter(r => r.status === 'rejected' || !r.value || !r.value.success).length;
 
     // Preparar resultados detallados
     const detailedResults = results.map((r, i) => {
@@ -488,15 +491,61 @@ export const syncAllUserData = async (userId) => {
       const store = i === 0 ? 'transactions' : stores[i - 1];
       return {
         store,
-        success: r.status === 'fulfilled' && r.value.success,
-        message: r.status === 'fulfilled' ? r.value.message : r.reason.message
+        success: r.status === 'fulfilled' && r.value && r.value.success,
+        message: r.status === 'fulfilled' && r.value ? r.value.message : (r.reason ? r.reason.message : 'Error desconocido')
       };
     });
+
+    // Actualizar datos en el almacenamiento local simple
+    try {
+      // Obtener datos de IndexedDB y guardarlos en el almacenamiento simple
+      const { getFromIndexedDB } = await import('./offlineStorage');
+      const { saveTransactions, saveTasks, saveInvestments, saveFinancialGoals, saveEvents } = await import('./simpleStorage');
+
+      // Transacciones
+      const transactions = await getFromIndexedDB('transactions');
+      if (transactions && transactions.length > 0) {
+        saveTransactions(transactions);
+        console.log('Transacciones sincronizadas con almacenamiento simple:', transactions.length);
+      }
+
+      // Tareas
+      const tasks = await getFromIndexedDB('tasks');
+      if (tasks && tasks.length > 0) {
+        saveTasks(tasks);
+        console.log('Tareas sincronizadas con almacenamiento simple:', tasks.length);
+      }
+
+      // Inversiones
+      const investments = await getFromIndexedDB('investments');
+      if (investments && investments.length > 0) {
+        saveInvestments(investments);
+        console.log('Inversiones sincronizadas con almacenamiento simple:', investments.length);
+      }
+
+      // Metas financieras
+      const goals = await getFromIndexedDB('financial_goals');
+      if (goals && goals.length > 0) {
+        saveFinancialGoals(goals);
+        console.log('Metas financieras sincronizadas con almacenamiento simple:', goals.length);
+      }
+
+      // Eventos
+      const events = await getFromIndexedDB('events');
+      if (events && events.length > 0) {
+        saveEvents(events);
+        console.log('Eventos sincronizados con almacenamiento simple:', events.length);
+      }
+    } catch (storageError) {
+      console.error('Error al sincronizar con almacenamiento simple:', storageError);
+    }
 
     return {
       success: failed === 0,
       message: `Sincronización completa: ${succeeded} almacenes sincronizados, ${failed} fallidos`,
-      results: detailedResults
+      results: detailedResults,
+      succeeded,
+      failed
     };
   } catch (error) {
     console.error('Error durante la sincronización completa:', error);

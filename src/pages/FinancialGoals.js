@@ -5,6 +5,7 @@ import GoalFilters from '../components/FinancialGoals/GoalFilters';
 import GoalForm from '../components/FinancialGoals/GoalForm';
 import GoalList from '../components/FinancialGoals/GoalList';
 import CategoryManager from '../components/FinancialGoals/CategoryManager';
+import { showInfo } from '../components/common/Notification';
 import { getFinancialGoals, saveFinancialGoals, addFinancialGoal, updateFinancialGoal, deleteFinancialGoal } from '../services/simpleStorage';
 import { getFinancialGoalsCategories, saveFinancialGoalsCategories } from '../services/categoryService';
 
@@ -149,6 +150,28 @@ const FinancialGoals = () => {
     };
 
     loadGoals();
+
+    // Escuchar eventos de sincronización
+    const handleDataSynced = (event) => {
+      const { detail } = event;
+      if (detail.success && detail.stores && detail.stores.includes('financial_goals')) {
+        console.log('Datos de metas financieras sincronizados, recargando...');
+        // Recargar metas financieras desde el almacenamiento local
+        const syncedData = getFinancialGoals();
+        if (syncedData && syncedData.length > 0) {
+          console.log('Metas financieras actualizadas desde sincronización:', syncedData.length);
+          setGoals(syncedData);
+          showInfo('Metas financieras actualizadas');
+        }
+      }
+    };
+
+    window.addEventListener('data-synced', handleDataSynced);
+
+    // Limpiar suscripciones al desmontar
+    return () => {
+      window.removeEventListener('data-synced', handleDataSynced);
+    };
   }, []);
 
   // Cargar categorías

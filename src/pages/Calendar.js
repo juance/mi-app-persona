@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FiPlus } from 'react-icons/fi';
 import CalendarGrid from '../components/Calendar/CalendarGrid';
 import EventList from '../components/Calendar/EventList';
 import EventForm from '../components/Calendar/EventForm';
+import { showInfo } from '../components/common/Notification';
+import { getEvents, saveEvents, addEvent, updateEvent, deleteEvent } from '../services/simpleStorage';
 
 const CalendarContainer = styled.div`
   max-width: 1200px;
@@ -110,32 +112,104 @@ const AddEventButton = styled.button`
   }
 `;
 
-// Lista vacía de eventos
-const sampleEvents = [];
-
 const Calendar = () => {
-  const [events, setEvents] = useState(sampleEvents);
+  const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Cargar eventos desde el almacenamiento local
+  useEffect(() => {
+    const loadEvents = () => {
+      try {
+        setLoading(true);
+        // Obtener eventos del almacenamiento local
+        const savedEvents = getEvents();
+        console.log('Eventos cargados desde el almacenamiento local:', savedEvents);
+        setEvents(savedEvents || []);
+      } catch (error) {
+        console.error('Error al cargar eventos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEvents();
+
+    // Escuchar eventos de sincronización
+    const handleDataSynced = (event) => {
+      const { detail } = event;
+      if (detail.success && detail.stores && detail.stores.includes('events')) {
+        console.log('Datos de eventos sincronizados, recargando...');
+        // Recargar eventos desde el almacenamiento local
+        const syncedData = getEvents();
+        if (syncedData && syncedData.length > 0) {
+          console.log('Eventos actualizados desde sincronización:', syncedData.length);
+          setEvents(syncedData);
+          showInfo('Eventos actualizados');
+        }
+      }
+    };
+
+    window.addEventListener('data-synced', handleDataSynced);
+
+    // Limpiar suscripciones al desmontar
+    return () => {
+      window.removeEventListener('data-synced', handleDataSynced);
+    };
+  }, []);
 
   const handleSelectDate = (date) => {
     setSelectedDate(date);
   };
 
   const handleAddEvent = (newEvent) => {
-    // Si estamos editando, actualizar el evento existente
-    if (editingEvent) {
-      setEvents(prev => prev.map(event =>
-        event.id === newEvent.id ? newEvent : event
-      ));
-      setEditingEvent(null);
-    } else {
-      // Si es un nuevo evento, agregarlo a la lista
-      setEvents(prev => [...prev, newEvent]);
-    }
+    try {
+      // Si estamos editando, actualizar el evento existente
+      if (editingEvent) {
+        // Actualizar el evento en el almacenamiento local
+        const updatedEvent = updateEvent(newEvent.id, newEvent);
 
-    setShowForm(false);
+        if (updatedEvent) {
+          console.log('Evento actualizado correctamente:', updatedEvent);
+          // Actualizar el estado
+          setEvents(prev => prev.map(event =>
+            event.id === newEvent.id ? updatedEvent : event
+          ));
+          setEditingEvent(null);
+          showInfo('Evento actualizado correctamente');
+        } else {
+          console.error('No se pudo actualizar el evento');
+          alert('No se pudo actualizar el evento. Por favor, intenta de nuevo.');
+        }
+      } else {
+        // Si es un nuevo evento, agregarlo a la lista
+        // Generar un ID si no tiene
+        const eventWithId = {
+          ...newEvent,
+          id: newEvent.id || `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        };
+
+        // Agregar el evento al almacenamiento local
+        const savedEvent = addEvent(eventWithId);
+
+        if (savedEvent) {
+          console.log('Evento agregado correctamente:', savedEvent);
+          // Actualizar el estado
+          setEvents(prev => [...prev, savedEvent]);
+          showInfo('Evento creado correctamente');
+        } else {
+          console.error('No se pudo agregar el evento');
+          alert('No se pudo agregar el evento. Por favor, intenta de nuevo.');
+        }
+      }
+
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error al guardar el evento:', error);
+      alert('Error al guardar el evento. Por favor, intenta de nuevo.');
+    }
   };
 
   const handleEditEvent = (event) => {
@@ -145,7 +219,23 @@ const Calendar = () => {
 
   const handleDeleteEvent = (eventId) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este evento?')) {
-      setEvents(prev => prev.filter(event => event.id !== eventId));
+      try {
+        // Eliminar el evento del almacenamiento local
+        const success = deleteEvent(eventId);
+
+        if (success) {
+          console.log('Evento eliminado correctamente');
+          // Actualizar el estado
+          setEvents(prev => prev.filter(event => event.id !== eventId));
+          showInfo('Evento eliminado correctamente');
+        } else {
+          console.error('No se pudo eliminar el evento');
+          alert('No se pudo eliminar el evento. Por favor, intenta de nuevo.');
+        }
+      } catch (error) {
+        console.error('Error al eliminar el evento:', error);
+        alert('Error al eliminar el evento. Por favor, intenta de nuevo.');
+      }
     }
   };
 
@@ -191,12 +281,18 @@ const Calendar = () => {
         )}
 
         {/* Lista de eventos */}
-        <EventList
-          events={events}
-          selectedDate={selectedDate}
-          onEditEvent={handleEditEvent}
-          onDeleteEvent={handleDeleteEvent}
-        />
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            <p>Cargando eventos...</p>
+          </div>
+        ) : (
+          <EventList
+            events={events}
+            selectedDate={selectedDate}
+            onEditEvent={handleEditEvent}
+            onDeleteEvent={handleDeleteEvent}
+          />
+        )}
       </EventsSection>
     </CalendarContainer>
   );

@@ -239,9 +239,27 @@ const Finances = () => {
 
     setupRealtimeSubscription();
 
-    // Limpiar suscripción al desmontar
+    // Escuchar eventos de sincronización
+    const handleDataSynced = (event) => {
+      const { detail } = event;
+      if (detail.success && detail.stores && detail.stores.includes('transactions')) {
+        console.log('Datos de transacciones sincronizados, recargando...');
+        // Recargar transacciones desde el almacenamiento local
+        const syncedData = getTransactions();
+        if (syncedData && syncedData.length > 0) {
+          console.log('Transacciones actualizadas desde sincronización:', syncedData.length);
+          setTransactions(syncedData);
+          showInfo('Transacciones actualizadas');
+        }
+      }
+    };
+
+    window.addEventListener('data-synced', handleDataSynced);
+
+    // Limpiar suscripciones al desmontar
     return () => {
       unsubscribe(subscription);
+      window.removeEventListener('data-synced', handleDataSynced);
     };
   }, []);
 

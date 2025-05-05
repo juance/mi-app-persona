@@ -4,6 +4,7 @@ import { FiPlus } from 'react-icons/fi';
 import TaskList from '../components/Tasks/TaskList';
 import TaskForm from '../components/Tasks/TaskForm';
 import TaskFilters from '../components/Tasks/TaskFilters';
+import { showInfo } from '../components/common/Notification';
 import { getTasks, saveTasks, addTask, updateTask, deleteTask, toggleTaskComplete } from '../services/simpleStorage';
 
 const TasksContainer = styled.div`
@@ -184,6 +185,28 @@ const Tasks = () => {
     };
 
     loadTasks();
+
+    // Escuchar eventos de sincronización
+    const handleDataSynced = (event) => {
+      const { detail } = event;
+      if (detail.success && detail.stores && detail.stores.includes('tasks')) {
+        console.log('Datos de tareas sincronizados, recargando...');
+        // Recargar tareas desde el almacenamiento local
+        const syncedData = getTasks();
+        if (syncedData && syncedData.length > 0) {
+          console.log('Tareas actualizadas desde sincronización:', syncedData.length);
+          setTasks(syncedData);
+          showInfo('Tareas actualizadas');
+        }
+      }
+    };
+
+    window.addEventListener('data-synced', handleDataSynced);
+
+    // Limpiar suscripciones al desmontar
+    return () => {
+      window.removeEventListener('data-synced', handleDataSynced);
+    };
   }, []);
 
   // Aplicar filtros y ordenamiento cuando cambian los filtros o las tareas

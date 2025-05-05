@@ -137,7 +137,7 @@ const AppInitializer = () => {
         visible: true,
         status: 'syncing',
         title: 'Sincronizando datos...',
-        message: 'Obteniendo datos más recientes',
+        message: force ? 'Sincronización completa en progreso' : 'Obteniendo datos más recientes',
         lastSync: syncStatus.lastSync
       });
 
@@ -156,6 +156,14 @@ const AppInitializer = () => {
           lastSync: new Date()
         });
 
+        // Disparar evento personalizado para notificar a los componentes
+        window.dispatchEvent(new CustomEvent('data-synced', {
+          detail: {
+            success: true,
+            stores: result.results ? result.results.map(r => r.store) : []
+          }
+        }));
+
         // Ocultar después de 3 segundos
         setTimeout(() => {
           setSyncStatus(prev => ({ ...prev, visible: false }));
@@ -171,6 +179,15 @@ const AppInitializer = () => {
           message: `${result.succeeded} sincronizados, ${result.failed} fallidos`,
           lastSync: new Date()
         });
+
+        // Disparar evento personalizado para notificar a los componentes
+        window.dispatchEvent(new CustomEvent('data-synced', {
+          detail: {
+            success: false,
+            partial: true,
+            stores: result.results ? result.results.filter(r => r.success).map(r => r.store) : []
+          }
+        }));
 
         // Ocultar después de 5 segundos
         setTimeout(() => {
@@ -188,6 +205,14 @@ const AppInitializer = () => {
         message: error.message || 'No se pudieron sincronizar los datos',
         lastSync: syncStatus.lastSync
       });
+
+      // Disparar evento personalizado para notificar a los componentes
+      window.dispatchEvent(new CustomEvent('data-synced', {
+        detail: {
+          success: false,
+          error: error.message
+        }
+      }));
 
       // Ocultar después de 5 segundos
       setTimeout(() => {
