@@ -14,7 +14,9 @@ import { showInfo, showError } from '../components/common/Notification';
 // Estado de la sincronización
 let isSyncing = false;
 let syncInterval = null;
-const SYNC_INTERVAL = 30000; // 30 segundos
+let lastSyncTime = null;
+const SYNC_INTERVAL = 60000; // 60 segundos
+const MIN_SYNC_INTERVAL = 30000; // 30 segundos (tiempo mínimo entre sincronizaciones)
 
 /**
  * Iniciar el servicio de sincronización
@@ -90,14 +92,35 @@ export const initSyncService = (options = {}) => {
 
 /**
  * Sincronizar datos con el servidor
+ * @param {boolean} force - Forzar sincronización incluso si se sincronizó recientemente
  * @returns {Promise<Object>} - Resultado de la sincronización
  */
-export const syncData = async () => {
-  if (isSyncing || !checkOnlineStatus()) {
-    return { success: false, message: 'Ya hay una sincronización en curso o no hay conexión' };
+export const syncData = async (force = false) => {
+  // Verificar si ya hay una sincronización en curso
+  if (isSyncing) {
+    return { success: false, message: 'Ya hay una sincronización en curso', synced: 0 };
   }
 
+  // Verificar si hay conexión a Internet
+  if (!checkOnlineStatus()) {
+    return { success: false, message: 'No hay conexión a Internet', synced: 0 };
+  }
+
+  // Verificar si ha pasado suficiente tiempo desde la última sincronización
+  const now = Date.now();
+  if (!force && lastSyncTime && (now - lastSyncTime < MIN_SYNC_INTERVAL)) {
+    console.log(`Sincronización omitida: última sincronización hace ${Math.floor((now - lastSyncTime) / 1000)} segundos`);
+    return {
+      success: true,
+      message: 'Sincronización omitida: demasiado pronto desde la última sincronización',
+      synced: 0,
+      skipped: true
+    };
+  }
+
+  // Marcar como sincronizando y actualizar tiempo de última sincronización
   isSyncing = true;
+  lastSyncTime = now;
 
   try {
     // Obtener operaciones pendientes
@@ -400,39 +423,99 @@ export const syncFromServer = async (storeName, tableName = null, options = {}) 
     // Si no se proporciona nombre de tabla, usar el nombre del almacén
     const table = tableName || mapStoreNameToTable(storeName);
 
-    // Construir consulta
-    let query = supabase.from(table).select('*');
+    // Verificar si la tabla existe
+    try {
+      // Construir consulta
+      let query = supabase.from(table).select('*');
 
-    // Filtrar por usuario si se proporciona ID
-    if (options.userId) {
-      query = query.eq('user_id', options.userId);
+      // Filtrar por usuario si se proporciona ID
+      if (options.userId) {
+        query = query.eq('user_id', options.userId);
+      }
+
+      // Limitar a 1 registro para verificar si la tabla existe
+      query = query.limit(1);
+
+      // Intentar obtener datos para verificar si la tabla existe
+      const { error: tableCheckError } = await query;
+
+      // Si hay un error específico de tabla no encontrada, crear la tabla
+      if (tableCheckError && (
+        tableCheckError.message.includes('does not exist') ||
+        tableCheckError.code === '42P01' ||
+        tableCheckError.code === 404
+      )) {
+        console.log(`La tabla ${table} no existe. Creando tabla...`);
+
+        // Para plataformas y categorías, intentamos crearlas automáticamente
+        if (table === 'platforms' || table === 'categories') {
+          await createTableIfNotExists(table);
+          console.log(`Tabla ${table} creada correctamente`);
+        } else {
+          // Para otras tablas, simplemente devolvemos éxito pero con 0 registros
+          return {
+            success: true,
+            message: `Tabla ${table} no existe. No hay datos para sincronizar.`,
+            count: 0,
+          };
+        }
+      } else if (tableCheckError) {
+        // Si hay otro tipo de error, lanzarlo
+        throw tableCheckError;
+      }
+
+      // Ahora que sabemos que la tabla existe, obtener todos los datos
+      query = supabase.from(table).select('*');
+
+      // Filtrar por usuario si se proporciona ID
+      if (options.userId) {
+        query = query.eq('user_id', options.userId);
+      }
+
+      // Obtener datos del servidor
+      const { data: serverData, error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      // Limpiar almacén si se solicita
+      if (options.clearBeforeSync) {
+        await clearIndexedDBStore(storeName);
+      }
+
+      // Guardar datos en IndexedDB
+      if (serverData && serverData.length > 0) {
+        await saveToIndexedDB(storeName, serverData);
+        console.log(`Sincronizados ${serverData.length} registros de ${storeName} desde el servidor`);
+      } else {
+        console.log(`No se encontraron datos para sincronizar de ${storeName}`);
+      }
+
+      return {
+        success: true,
+        message: `Sincronización completada: ${serverData ? serverData.length : 0} registros`,
+        count: serverData ? serverData.length : 0,
+      };
+    } catch (error) {
+      // Si hay un error al verificar la tabla, intentar crear la tabla si es platforms o categories
+      if (table === 'platforms' || table === 'categories') {
+        try {
+          await createTableIfNotExists(table);
+          console.log(`Tabla ${table} creada correctamente después de error`);
+          return {
+            success: true,
+            message: `Tabla ${table} creada. No hay datos para sincronizar.`,
+            count: 0,
+          };
+        } catch (createError) {
+          console.error(`Error al crear tabla ${table}:`, createError);
+          throw createError;
+        }
+      } else {
+        throw error;
+      }
     }
-
-    // Obtener datos del servidor
-    const { data: serverData, error } = await query;
-
-    if (error) {
-      throw error;
-    }
-
-    // Limpiar almacén si se solicita
-    if (options.clearBeforeSync) {
-      await clearIndexedDBStore(storeName);
-    }
-
-    // Guardar datos en IndexedDB
-    if (serverData && serverData.length > 0) {
-      await saveToIndexedDB(storeName, serverData);
-      console.log(`Sincronizados ${serverData.length} registros de ${storeName} desde el servidor`);
-    } else {
-      console.log(`No se encontraron datos para sincronizar de ${storeName}`);
-    }
-
-    return {
-      success: true,
-      message: `Sincronización completada: ${serverData ? serverData.length : 0} registros`,
-      count: serverData ? serverData.length : 0,
-    };
   } catch (error) {
     console.error(`Error al sincronizar desde el servidor (${storeName}):`, error);
     return {
@@ -440,6 +523,56 @@ export const syncFromServer = async (storeName, tableName = null, options = {}) 
       message: `Error al sincronizar: ${error.message}`,
       error,
     };
+  }
+};
+
+/**
+ * Crear tabla en Supabase si no existe
+ * @param {string} tableName - Nombre de la tabla a crear
+ * @returns {Promise<boolean>} - Resultado de la creación
+ */
+const createTableIfNotExists = async (tableName) => {
+  try {
+    let query = '';
+
+    if (tableName === 'platforms') {
+      query = `
+        CREATE TABLE IF NOT EXISTS platforms (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          type TEXT NOT NULL,
+          user_id UUID REFERENCES auth.users(id),
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+        );
+      `;
+    } else if (tableName === 'categories') {
+      query = `
+        CREATE TABLE IF NOT EXISTS categories (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          type TEXT NOT NULL,
+          user_id UUID REFERENCES auth.users(id),
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+        );
+      `;
+    } else {
+      throw new Error(`No hay definición para crear la tabla ${tableName}`);
+    }
+
+    // Ejecutar la consulta SQL para crear la tabla
+    const { error } = await supabase.rpc('execute_sql', { query });
+
+    if (error) {
+      console.error(`Error al crear tabla ${tableName}:`, error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`Error al crear tabla ${tableName}:`, error);
+    throw error;
   }
 };
 
@@ -454,6 +587,32 @@ export const syncAllUserData = async (userId, force = false) => {
     console.error('No se proporcionó ID de usuario para sincronización');
     return { success: false, message: 'No se proporcionó ID de usuario' };
   }
+
+  // Verificar si ya hay una sincronización en curso
+  if (isSyncing && !force) {
+    return { success: false, message: 'Ya hay una sincronización en curso', synced: 0 };
+  }
+
+  // Verificar si hay conexión a Internet
+  if (!checkOnlineStatus()) {
+    return { success: false, message: 'No hay conexión a Internet', synced: 0 };
+  }
+
+  // Verificar si ha pasado suficiente tiempo desde la última sincronización
+  const now = Date.now();
+  if (!force && lastSyncTime && (now - lastSyncTime < MIN_SYNC_INTERVAL)) {
+    console.log(`Sincronización completa omitida: última sincronización hace ${Math.floor((now - lastSyncTime) / 1000)} segundos`);
+    return {
+      success: true,
+      message: 'Sincronización omitida: demasiado pronto desde la última sincronización',
+      synced: 0,
+      skipped: true
+    };
+  }
+
+  // Marcar como sincronizando y actualizar tiempo de última sincronización
+  isSyncing = true;
+  lastSyncTime = now;
 
   console.log(`Iniciando sincronización completa para el usuario ${userId}${force ? ' (forzada)' : ''}`);
 
@@ -680,20 +839,37 @@ export const syncAllUserData = async (userId, force = false) => {
       }
     } catch (storageError) {
       console.error('Error al sincronizar con almacenamiento simple:', storageError);
+    } finally {
+      // Asegurarse de liberar el estado de sincronización
+      isSyncing = false;
     }
+
+    // Disparar evento personalizado para notificar a los componentes
+    window.dispatchEvent(new CustomEvent('data-synced', {
+      detail: {
+        success: failed === 0,
+        stores: detailedResults.filter(r => r.success).map(r => r.store)
+      }
+    }));
 
     return {
       success: failed === 0,
       message: `Sincronización completa: ${succeeded} almacenes sincronizados, ${failed} fallidos`,
       results: detailedResults,
       succeeded,
-      failed
+      failed,
+      timestamp: Date.now()
     };
   } catch (error) {
     console.error('Error durante la sincronización completa:', error);
+
+    // Asegurarse de liberar el estado de sincronización en caso de error
+    isSyncing = false;
+
     return {
       success: false,
-      message: `Error durante la sincronización completa: ${error.message}`
+      message: `Error durante la sincronización completa: ${error.message}`,
+      error: error.toString()
     };
   }
 };

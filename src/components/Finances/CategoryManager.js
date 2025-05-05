@@ -67,8 +67,8 @@ const Tab = styled.button`
   border: none;
   padding: 10px 20px;
   font-size: 1rem;
-  font-weight: ${props => props.active ? '600' : '400'};
-  color: ${props => props.active ? 'var(--primary-color)' : 'var(--text-medium)'};
+  font-weight: ${props => props.$active ? '600' : '400'};
+  color: ${props => props.$active ? 'var(--primary-color)' : 'var(--text-medium)'};
   cursor: pointer;
   position: relative;
 
@@ -79,7 +79,7 @@ const Tab = styled.button`
     left: 0;
     width: 100%;
     height: 2px;
-    background-color: ${props => props.active ? 'var(--primary-color)' : 'transparent'};
+    background-color: ${props => props.$active ? 'var(--primary-color)' : 'transparent'};
     transition: background-color var(--transition-speed);
   }
 
@@ -396,13 +396,13 @@ const CategoryManager = ({ onClose, onCategoriesChange }) => {
 
       <TabsContainer>
         <Tab
-          active={activeTab === 'expense'}
+          $active={activeTab === 'expense'}
           onClick={() => setActiveTab('expense')}
         >
           Categorías de Gastos
         </Tab>
         <Tab
-          active={activeTab === 'income'}
+          $active={activeTab === 'income'}
           onClick={() => setActiveTab('income')}
         >
           Categorías de Ingresos

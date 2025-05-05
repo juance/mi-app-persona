@@ -10,24 +10,24 @@ const SyncButton = styled.button`
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: ${props => props.syncing ? 'var(--bg-medium)' : props.disabled ? 'var(--bg-medium)' : 'var(--primary-color)'};
+  background-color: ${props => props.$syncing ? 'var(--bg-medium)' : props.disabled ? 'var(--bg-medium)' : 'var(--primary-color)'};
   color: white;
   border: none;
   border-radius: 4px;
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 500;
-  cursor: ${props => props.syncing || props.disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => props.$syncing || props.disabled ? 'not-allowed' : 'pointer'};
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   opacity: ${props => props.disabled ? 0.7 : 1};
 
   &:hover {
-    background-color: ${props => props.syncing || props.disabled ? 'var(--bg-medium)' : 'var(--primary-dark)'};
+    background-color: ${props => props.$syncing || props.disabled ? 'var(--bg-medium)' : 'var(--primary-dark)'};
   }
 
   svg {
-    animation: ${props => props.syncing ? 'spin 1s linear infinite' : 'none'};
+    animation: ${props => props.$syncing ? 'spin 1s linear infinite' : 'none'};
   }
 
   @keyframes spin {
@@ -98,7 +98,7 @@ const SyncForceButton = () => {
   return (
     <SyncButton
       onClick={handleSync}
-      syncing={syncing}
+      $syncing={syncing}
       disabled={isDisabled}
       className="sync-force-button"
     >

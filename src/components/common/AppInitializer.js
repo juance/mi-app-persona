@@ -67,7 +67,7 @@ const SyncButton = styled.button`
   }
 
   svg {
-    animation: ${props => props.spinning ? 'spin 1s linear infinite' : 'none'};
+    animation: ${props => props.$spinning ? 'spin 1s linear infinite' : 'none'};
   }
 
   @keyframes spin {
@@ -393,7 +393,7 @@ const AppInitializer = () => {
       <SyncButton
         onClick={() => syncData(true)}
         disabled={syncStatus.status === 'syncing' || !isOnline}
-        spinning={syncStatus.status === 'syncing'}
+        $spinning={syncStatus.status === 'syncing'}
         title="Forzar sincronización"
         aria-label="Forzar sincronización"
       >
