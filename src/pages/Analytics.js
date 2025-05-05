@@ -8,6 +8,11 @@ import PersonalizedRecommendations from '../components/Analytics/PersonalizedRec
 const AnalyticsContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
+  background-color: #121212;
+  color: #ffffff;
+  padding: 24px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 `;
 
 const AnalyticsHeader = styled.div`
@@ -16,7 +21,7 @@ const AnalyticsHeader = styled.div`
   h1 {
     font-size: 2.2rem;
     font-weight: 700;
-    color: var(--text-dark);
+    color: #ffffff;
     margin-bottom: 12px;
     position: relative;
     padding-bottom: 12px;
@@ -34,7 +39,7 @@ const AnalyticsHeader = styled.div`
   }
 
   p {
-    color: var(--text-medium);
+    color: #b0b0b0;
     font-size: 1.1rem;
   }
 `;
@@ -43,7 +48,7 @@ const TabsContainer = styled.div`
   display: flex;
   gap: 16px;
   margin-bottom: 32px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   @media (max-width: 768px) {
     overflow-x: auto;
@@ -56,7 +61,7 @@ const Tab = styled.button`
   border: none;
   padding: 12px 24px;
   font-size: 1.1rem;
-  color: ${props => props.active ? 'var(--primary-color)' : 'var(--text-medium)'};
+  color: ${props => props.active ? 'var(--primary-color)' : '#b0b0b0'};
   font-weight: ${props => props.active ? '600' : '400'};
   border-bottom: 3px solid ${props => props.active ? 'var(--primary-color)' : 'transparent'};
   cursor: pointer;

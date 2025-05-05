@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiCheck, FiSave } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiCheck, FiSave, FiLoader } from 'react-icons/fi';
 
 const Container = styled.div`
   background-color: var(--bg-light);
@@ -137,6 +137,31 @@ const SaveButton = styled(Button)`
   margin-top: 20px;
 `;
 
+const LoadingSpinner = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+const StatusMessage = styled.div`
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  background-color: ${props => props.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'};
+  color: ${props => props.type === 'success' ? 'var(--secondary-color)' : 'var(--danger-color)'};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 const EditForm = styled.div`
   display: flex;
   align-items: center;
@@ -163,6 +188,8 @@ const CategoryManager = ({ categories, onSaveCategories }) => {
   const [editName, setEditName] = useState('');
   const [editValue, setEditValue] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [statusMessage, setStatusMessage] = useState(null);
 
   useEffect(() => {
     setCustomCategories(categories || []);
@@ -170,16 +197,16 @@ const CategoryManager = ({ categories, onSaveCategories }) => {
 
   const handleAddCategory = (e) => {
     e.preventDefault();
-    
+
     if (!newCategoryName.trim() || !newCategoryValue.trim()) {
       return;
     }
-    
+
     const newCategory = {
       name: newCategoryName.trim(),
       value: newCategoryValue.trim()
     };
-    
+
     setCustomCategories([...customCategories, newCategory]);
     setNewCategoryName('');
     setNewCategoryValue('');
@@ -196,13 +223,13 @@ const CategoryManager = ({ categories, onSaveCategories }) => {
     if (!editName.trim() || !editValue.trim()) {
       return;
     }
-    
+
     const updatedCategories = [...customCategories];
     updatedCategories[editingIndex] = {
       name: editName.trim(),
       value: editValue.trim()
     };
-    
+
     setCustomCategories(updatedCategories);
     setEditingIndex(-1);
     setHasChanges(true);
@@ -220,15 +247,41 @@ const CategoryManager = ({ categories, onSaveCategories }) => {
     }
   };
 
-  const handleSaveChanges = () => {
-    onSaveCategories(customCategories);
-    setHasChanges(false);
+  const handleSaveChanges = async () => {
+    try {
+      setIsSaving(true);
+      setStatusMessage(null);
+
+      // Llamar a la función asíncrona para guardar categorías
+      const success = await onSaveCategories(customCategories);
+
+      if (success) {
+        setHasChanges(false);
+        setStatusMessage({
+          type: 'success',
+          text: 'Categorías guardadas correctamente. Se han sincronizado con la nube.'
+        });
+      } else {
+        setStatusMessage({
+          type: 'error',
+          text: 'No se pudieron guardar las categorías en la nube, pero se guardaron localmente.'
+        });
+      }
+    } catch (error) {
+      console.error('Error al guardar categorías:', error);
+      setStatusMessage({
+        type: 'error',
+        text: 'Error al guardar categorías: ' + (error.message || 'Error desconocido')
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
     <Container>
       <Title>Gestionar Categorías</Title>
-      
+
       <AddForm onSubmit={handleAddCategory}>
         <Input
           type="text"
@@ -248,7 +301,7 @@ const CategoryManager = ({ categories, onSaveCategories }) => {
           <FiPlus /> Agregar
         </Button>
       </AddForm>
-      
+
       <CategoryList>
         {customCategories.length > 0 ? (
           customCategories.map((category, index) => (
@@ -296,11 +349,30 @@ const CategoryManager = ({ categories, onSaveCategories }) => {
           <NoCategories>No hay categorías personalizadas. Agrega una nueva.</NoCategories>
         )}
       </CategoryList>
-      
+
       {hasChanges && (
-        <SaveButton onClick={handleSaveChanges} variant="primary">
-          <FiSave /> Guardar Cambios
+        <SaveButton
+          onClick={handleSaveChanges}
+          variant="primary"
+          disabled={isSaving}
+        >
+          {isSaving ? (
+            <>
+              <LoadingSpinner><FiLoader /></LoadingSpinner> Guardando...
+            </>
+          ) : (
+            <>
+              <FiSave /> Guardar Cambios
+            </>
+          )}
         </SaveButton>
+      )}
+
+      {statusMessage && (
+        <StatusMessage type={statusMessage.type}>
+          {statusMessage.type === 'success' ? <FiCheck /> : <FiX />}
+          {statusMessage.text}
+        </StatusMessage>
       )}
     </Container>
   );

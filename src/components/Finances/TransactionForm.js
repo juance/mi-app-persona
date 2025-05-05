@@ -284,6 +284,7 @@ const initialFormState = {
   category: 'other',
   platformType: 'virtual', // 'cash' o 'virtual'
   platform: '',
+  currency: 'ARS', // 'ARS' o 'USD'
   date: new Date().toISOString().split('T')[0]
 };
 
@@ -363,6 +364,7 @@ const TransactionForm = ({ transaction, onSubmit, onCancel }) => {
         category: transaction.category || 'other',
         platformType: platformType,
         platform: transaction.platform || '',
+        currency: transaction.currency || 'ARS',
         date: transaction.date || new Date().toISOString().split('T')[0]
       });
     } else {
@@ -484,7 +486,36 @@ const TransactionForm = ({ transaction, onSubmit, onCancel }) => {
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="amount" required>Monto (ARS)</Label>
+          <Label htmlFor="currency" required>Moneda</Label>
+          <RadioGroup>
+            <RadioLabel type="currency" checked={formData.currency === 'ARS'}>
+              <RadioInput
+                type="radio"
+                id="currency-ars"
+                name="currency"
+                value="ARS"
+                checked={formData.currency === 'ARS'}
+                onChange={handleChange}
+              />
+              Pesos (ARS)
+            </RadioLabel>
+
+            <RadioLabel type="currency" checked={formData.currency === 'USD'}>
+              <RadioInput
+                type="radio"
+                id="currency-usd"
+                name="currency"
+                value="USD"
+                checked={formData.currency === 'USD'}
+                onChange={handleChange}
+              />
+              Dólares (USD)
+            </RadioLabel>
+          </RadioGroup>
+        </FormGroup>
+
+        <FormGroup>
+          <Label htmlFor="amount" required>Monto ({formData.currency})</Label>
           <Input
             type="number"
             id="amount"

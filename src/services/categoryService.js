@@ -200,10 +200,36 @@ export const deleteCategory = async (id) => {
 
 /**
  * Obtiene las categorías de objetivos financieros
- * @returns {Array} - Lista de categorías
+ * @returns {Promise<Array>} - Lista de categorías
  */
-export const getFinancialGoalsCategories = () => {
+export const getFinancialGoalsCategories = async () => {
   try {
+    // Intentar obtener categorías de Supabase primero
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('type', 'financial_goal')
+        .or(`user_id.is.null,user_id.eq.${user.id}`)
+        .order('name', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        // Transformar los datos al formato esperado
+        const formattedCategories = data.map(cat => ({
+          name: cat.name,
+          value: cat.value
+        }));
+
+        // Guardar en localStorage como respaldo
+        localStorage.setItem(FINANCIAL_GOALS_CATEGORIES_KEY, JSON.stringify(formattedCategories));
+
+        return formattedCategories;
+      }
+    }
+
+    // Si no hay usuario autenticado o hubo un error, usar localStorage
     const categoriesJson = localStorage.getItem(FINANCIAL_GOALS_CATEGORIES_KEY);
 
     if (!categoriesJson) {
@@ -213,18 +239,84 @@ export const getFinancialGoalsCategories = () => {
     return JSON.parse(categoriesJson);
   } catch (error) {
     console.error('Error al obtener categorías de objetivos financieros:', error);
-    return DEFAULT_FINANCIAL_GOALS_CATEGORIES;
+
+    // En caso de error, usar las categorías predeterminadas
+    const categoriesJson = localStorage.getItem(FINANCIAL_GOALS_CATEGORIES_KEY);
+
+    if (!categoriesJson) {
+      return DEFAULT_FINANCIAL_GOALS_CATEGORIES;
+    }
+
+    return JSON.parse(categoriesJson);
   }
 };
 
 /**
  * Guarda las categorías de objetivos financieros
  * @param {Array} categories - Lista de categorías
- * @returns {boolean} - Indica si se guardaron correctamente
+ * @returns {Promise<boolean>} - Indica si se guardaron correctamente
  */
-export const saveFinancialGoalsCategories = (categories) => {
+export const saveFinancialGoalsCategories = async (categories) => {
   try {
+    // Guardar en localStorage primero como respaldo
     localStorage.setItem(FINANCIAL_GOALS_CATEGORIES_KEY, JSON.stringify(categories));
+
+    // Intentar guardar en Supabase si hay un usuario autenticado
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      // Obtener categorías existentes para este usuario
+      const { data: existingCategories } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('type', 'financial_goal')
+        .eq('user_id', user.id);
+
+      // Crear un mapa de categorías existentes por valor
+      const existingCategoryMap = {};
+      if (existingCategories) {
+        existingCategories.forEach(cat => {
+          existingCategoryMap[cat.value] = cat;
+        });
+      }
+
+      // Procesar cada categoría
+      for (const category of categories) {
+        if (existingCategoryMap[category.value]) {
+          // Actualizar categoría existente si el nombre ha cambiado
+          if (existingCategoryMap[category.value].name !== category.name) {
+            await supabase
+              .from('categories')
+              .update({ name: category.name, updated_at: new Date() })
+              .eq('id', existingCategoryMap[category.value].id);
+          }
+
+          // Eliminar del mapa para saber cuáles eliminar después
+          delete existingCategoryMap[category.value];
+        } else {
+          // Crear nueva categoría
+          await supabase
+            .from('categories')
+            .insert([{
+              user_id: user.id,
+              type: 'financial_goal',
+              name: category.name,
+              value: category.value
+            }]);
+        }
+      }
+
+      // Eliminar categorías que ya no existen
+      const categoriesToDelete = Object.values(existingCategoryMap);
+      if (categoriesToDelete.length > 0) {
+        const idsToDelete = categoriesToDelete.map(cat => cat.id);
+        await supabase
+          .from('categories')
+          .delete()
+          .in('id', idsToDelete);
+      }
+    }
+
     return true;
   } catch (error) {
     console.error('Error al guardar categorías de objetivos financieros:', error);

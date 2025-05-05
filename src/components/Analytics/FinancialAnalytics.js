@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
-import { 
-  Chart as ChartJS, 
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
   BarElement,
   ArcElement,
   RadialLinearScale,
-  Title, 
-  Tooltip, 
+  Title,
+  Tooltip,
   Legend,
   Filler
 } from 'chart.js';
@@ -38,11 +38,12 @@ ChartJS.register(
 
 // Estilos
 const AnalyticsContainer = styled.div`
-  background-color: var(--card-bg);
+  background-color: #1e1e1e;
   border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   padding: 24px;
   margin-bottom: 32px;
+  color: #ffffff;
 `;
 
 const AnalyticsHeader = styled.div`
@@ -51,8 +52,8 @@ const AnalyticsHeader = styled.div`
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
@@ -62,12 +63,12 @@ const AnalyticsHeader = styled.div`
 
 const AnalyticsTitle = styled.h2`
   margin: 0;
-  color: var(--text-dark);
+  color: #ffffff;
   font-size: 1.5rem;
   font-weight: 600;
   position: relative;
   padding-left: 16px;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -84,7 +85,7 @@ const AnalyticsTitle = styled.h2`
 const ChartTypeSelector = styled.div`
   display: flex;
   gap: 8px;
-  
+
   @media (max-width: 768px) {
     width: 100%;
     overflow-x: auto;
@@ -103,7 +104,7 @@ const FiltersContainer = styled.div`
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 24px;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -113,23 +114,29 @@ const FilterGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  
+
   label {
     font-size: 0.9rem;
-    color: var(--text-medium);
+    color: #b0b0b0;
   }
-  
+
   select, input {
     padding: 8px 12px;
     border-radius: var(--border-radius);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: #2a2a2a;
+    color: #ffffff;
     font-size: 0.9rem;
-    
+
     &:focus {
       outline: none;
       border-color: var(--primary-color);
       box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+    }
+
+    option {
+      background-color: #2a2a2a;
+      color: #ffffff;
     }
   }
 `;
@@ -142,30 +149,30 @@ const InsightsContainer = styled.div`
 `;
 
 const InsightCard = styled.div`
-  background-color: white;
+  background-color: #2a2a2a;
   border-radius: var(--border-radius);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   padding: 16px;
   border-left: 4px solid ${props => props.color || 'var(--primary-color)'};
-  
+
   h3 {
     margin: 0 0 8px 0;
     font-size: 1rem;
-    color: var(--text-dark);
+    color: #ffffff;
   }
-  
+
   p {
     margin: 0;
     font-size: 1.5rem;
     font-weight: 600;
     color: ${props => props.color || 'var(--primary-color)'};
   }
-  
+
   small {
     display: block;
     margin-top: 8px;
     font-size: 0.8rem;
-    color: var(--text-medium);
+    color: #b0b0b0;
   }
 `;
 
@@ -176,16 +183,38 @@ const chartOptions = {
   plugins: {
     legend: {
       position: 'top',
+      labels: {
+        color: '#ffffff'
+      }
     },
     tooltip: {
       mode: 'index',
       intersect: false,
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: '#ffffff',
+      bodyColor: '#ffffff',
+      borderColor: 'rgba(255, 255, 255, 0.2)',
+      borderWidth: 1
     },
   },
   scales: {
     y: {
       beginAtZero: true,
+      grid: {
+        color: 'rgba(255, 255, 255, 0.1)'
+      },
+      ticks: {
+        color: '#b0b0b0'
+      }
     },
+    x: {
+      grid: {
+        color: 'rgba(255, 255, 255, 0.1)'
+      },
+      ticks: {
+        color: '#b0b0b0'
+      }
+    }
   },
 };
 
@@ -201,7 +230,7 @@ const FinancialAnalytics = () => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  
+
   // Cargar transacciones
   useEffect(() => {
     const loadTransactions = async () => {
@@ -216,32 +245,32 @@ const FinancialAnalytics = () => {
         setLoading(false);
       }
     };
-    
+
     loadTransactions();
   }, []);
-  
+
   // Filtrar transacciones
   const filteredTransactions = useMemo(() => {
     let result = [...transactions];
-    
+
     // Filtrar por categoría
     if (categoryFilter !== 'all') {
       result = result.filter(transaction => transaction.category === categoryFilter);
     }
-    
+
     // Filtrar por fecha de inicio
     if (startDate) {
       result = result.filter(transaction => transaction.date >= startDate);
     }
-    
+
     // Filtrar por fecha de fin
     if (endDate) {
       result = result.filter(transaction => transaction.date <= endDate);
     }
-    
+
     return result;
   }, [transactions, categoryFilter, startDate, endDate]);
-  
+
   // Obtener categorías únicas
   const categories = useMemo(() => {
     const uniqueCategories = new Set();
@@ -252,12 +281,12 @@ const FinancialAnalytics = () => {
     });
     return Array.from(uniqueCategories);
   }, [transactions]);
-  
+
   // Preparar datos para gráficos
   const chartData = useMemo(() => {
     // Agrupar transacciones por período
     const groupedData = {};
-    
+
     // Determinar el formato de fecha según el período
     const getDateKey = (date) => {
       const dateObj = new Date(date);
@@ -276,24 +305,24 @@ const FinancialAnalytics = () => {
           return date;
       }
     };
-    
+
     // Agrupar transacciones por período y tipo
     filteredTransactions.forEach(transaction => {
       const dateKey = getDateKey(transaction.date);
       if (!groupedData[dateKey]) {
         groupedData[dateKey] = { income: 0, expense: 0 };
       }
-      
+
       if (transaction.type === 'income') {
         groupedData[dateKey].income += transaction.amount;
       } else if (transaction.type === 'expense') {
         groupedData[dateKey].expense += transaction.amount;
       }
     });
-    
+
     // Ordenar las fechas
     const sortedDates = Object.keys(groupedData).sort();
-    
+
     // Preparar datos para el gráfico
     const labels = sortedDates.map(date => {
       if (timeFrame === 'month') {
@@ -302,36 +331,36 @@ const FinancialAnalytics = () => {
       }
       return date;
     });
-    
+
     const incomeData = sortedDates.map(date => groupedData[date].income);
     const expenseData = sortedDates.map(date => groupedData[date].expense);
     const balanceData = sortedDates.map(date => groupedData[date].income - groupedData[date].expense);
-    
+
     // Datos para gráficos de categorías
     const categoryData = {};
     filteredTransactions.forEach(transaction => {
       if (!transaction.category) return;
-      
+
       if (!categoryData[transaction.category]) {
         categoryData[transaction.category] = { income: 0, expense: 0 };
       }
-      
+
       if (transaction.type === 'income') {
         categoryData[transaction.category].income += transaction.amount;
       } else if (transaction.type === 'expense') {
         categoryData[transaction.category].expense += transaction.amount;
       }
     });
-    
+
     const categoryLabels = Object.keys(categoryData);
     const categoryIncomeData = categoryLabels.map(category => categoryData[category].income);
     const categoryExpenseData = categoryLabels.map(category => categoryData[category].expense);
-    
+
     // Colores para los gráficos
     const incomeColor = 'rgba(75, 192, 192, 0.6)';
     const expenseColor = 'rgba(255, 99, 132, 0.6)';
     const balanceColor = 'rgba(153, 102, 255, 0.6)';
-    
+
     // Generar colores aleatorios para categorías
     const generateColors = (count) => {
       const colors = [];
@@ -341,9 +370,9 @@ const FinancialAnalytics = () => {
       }
       return colors;
     };
-    
+
     const categoryColors = generateColors(categoryLabels.length);
-    
+
     return {
       timeSeries: {
         labels,
@@ -400,7 +429,7 @@ const FinancialAnalytics = () => {
       },
     };
   }, [filteredTransactions, timeFrame]);
-  
+
   // Calcular estadísticas
   const statistics = useMemo(() => {
     if (filteredTransactions.length === 0) {
@@ -414,13 +443,13 @@ const FinancialAnalytics = () => {
         largestExpense: 0,
       };
     }
-    
+
     const incomeTransactions = filteredTransactions.filter(t => t.type === 'income');
     const expenseTransactions = filteredTransactions.filter(t => t.type === 'expense');
-    
+
     const totalIncome = incomeTransactions.reduce((sum, t) => sum + t.amount, 0);
     const totalExpense = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
-    
+
     return {
       totalIncome,
       totalExpense,
@@ -431,7 +460,7 @@ const FinancialAnalytics = () => {
       largestExpense: expenseTransactions.length > 0 ? Math.max(...expenseTransactions.map(t => t.amount)) : 0,
     };
   }, [filteredTransactions]);
-  
+
   // Formatear moneda
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('es-AR', {
@@ -439,7 +468,7 @@ const FinancialAnalytics = () => {
       currency: 'ARS',
     }).format(amount);
   };
-  
+
   // Renderizar gráfico según el tipo seleccionado
   const renderChart = () => {
     switch (chartType) {
@@ -465,7 +494,7 @@ const FinancialAnalytics = () => {
         return <Line data={chartData.timeSeries} options={chartOptions} />;
     }
   };
-  
+
   return (
     <AnalyticsContainer>
       <AnalyticsHeader>
@@ -508,7 +537,7 @@ const FinancialAnalytics = () => {
           </AnimatedButton>
         </ChartTypeSelector>
       </AnalyticsHeader>
-      
+
       <FiltersContainer>
         <FilterGroup>
           <label htmlFor="timeFrame">Período</label>
@@ -523,7 +552,7 @@ const FinancialAnalytics = () => {
             <option value="year">Anual</option>
           </select>
         </FilterGroup>
-        
+
         <FilterGroup>
           <label htmlFor="categoryFilter">Categoría</label>
           <select
@@ -537,7 +566,7 @@ const FinancialAnalytics = () => {
             ))}
           </select>
         </FilterGroup>
-        
+
         <FilterGroup>
           <label htmlFor="startDate">Fecha de inicio</label>
           <input
@@ -547,7 +576,7 @@ const FinancialAnalytics = () => {
             onChange={(e) => setStartDate(e.target.value)}
           />
         </FilterGroup>
-        
+
         <FilterGroup>
           <label htmlFor="endDate">Fecha de fin</label>
           <input
@@ -558,7 +587,7 @@ const FinancialAnalytics = () => {
           />
         </FilterGroup>
       </FiltersContainer>
-      
+
       {loading ? (
         <LoadingSpinner text="Cargando datos para análisis..." />
       ) : (
@@ -566,44 +595,44 @@ const FinancialAnalytics = () => {
           <ChartContainer>
             {renderChart()}
           </ChartContainer>
-          
+
           <InsightsContainer>
             <InsightCard color="var(--success-color)">
               <h3>Ingresos totales</h3>
               <p>{formatCurrency(statistics.totalIncome)}</p>
               <small>Durante el período seleccionado</small>
             </InsightCard>
-            
+
             <InsightCard color="var(--danger-color)">
               <h3>Gastos totales</h3>
               <p>{formatCurrency(statistics.totalExpense)}</p>
               <small>Durante el período seleccionado</small>
             </InsightCard>
-            
+
             <InsightCard color={statistics.balance >= 0 ? "var(--success-color)" : "var(--danger-color)"}>
               <h3>Balance</h3>
               <p>{formatCurrency(statistics.balance)}</p>
               <small>Ingresos - Gastos</small>
             </InsightCard>
-            
+
             <InsightCard color="var(--primary-color)">
               <h3>Ingreso promedio</h3>
               <p>{formatCurrency(statistics.averageIncome)}</p>
               <small>Por transacción</small>
             </InsightCard>
-            
+
             <InsightCard color="var(--secondary-color)">
               <h3>Gasto promedio</h3>
               <p>{formatCurrency(statistics.averageExpense)}</p>
               <small>Por transacción</small>
             </InsightCard>
-            
+
             <InsightCard color="var(--success-color-dark)">
               <h3>Mayor ingreso</h3>
               <p>{formatCurrency(statistics.largestIncome)}</p>
               <small>Transacción más grande</small>
             </InsightCard>
-            
+
             <InsightCard color="var(--danger-color-dark)">
               <h3>Mayor gasto</h3>
               <p>{formatCurrency(statistics.largestExpense)}</p>

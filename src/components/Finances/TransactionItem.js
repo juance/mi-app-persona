@@ -242,7 +242,7 @@ const getPlatformInfo = (platformString) => {
 };
 
 const TransactionItem = ({ transaction, onEdit, onDelete }) => {
-  const { id, title, amount, type, category, platform, date } = transaction;
+  const { id, title, amount, type, category, platform, date, currency = 'ARS' } = transaction;
   const { type: platformType, name: platformName } = getPlatformInfo(platform);
 
   // Memorizar los manejadores de eventos para evitar re-renderizados innecesarios
@@ -256,7 +256,7 @@ const TransactionItem = ({ transaction, onEdit, onDelete }) => {
 
   // Memorizar el formato de la fecha y el monto para evitar cálculos repetidos
   const formattedDate = useMemo(() => formatDate(date), [date]);
-  const formattedAmount = useMemo(() => formatCurrency(amount), [amount]);
+  const formattedAmount = useMemo(() => formatCurrency(amount, currency), [amount, currency]);
   const categoryName = useMemo(() => getCategoryName(category), [category]);
 
   // Detectar si estamos en un dispositivo móvil

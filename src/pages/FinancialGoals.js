@@ -153,9 +153,9 @@ const FinancialGoals = () => {
 
   // Cargar categorías
   useEffect(() => {
-    const loadCategories = () => {
+    const loadCategories = async () => {
       try {
-        const savedCategories = getFinancialGoalsCategories();
+        const savedCategories = await getFinancialGoalsCategories();
         console.log('Categorías cargadas:', savedCategories);
         setCategories(savedCategories || []);
       } catch (error) {
@@ -309,23 +309,23 @@ const FinancialGoals = () => {
     }
   };
 
-  const handleSaveCategories = (updatedCategories) => {
+  const handleSaveCategories = async (updatedCategories) => {
     try {
-      // Guardar categorías en el almacenamiento local
-      const success = saveFinancialGoalsCategories(updatedCategories);
+      // Guardar categorías en el almacenamiento local y en Supabase
+      const success = await saveFinancialGoalsCategories(updatedCategories);
 
       if (success) {
         console.log('Categorías guardadas correctamente:', updatedCategories);
         // Actualizar el estado
         setCategories(updatedCategories);
-        alert('Categorías guardadas correctamente.');
+        return true;
       } else {
         console.error('No se pudieron guardar las categorías');
-        alert('No se pudieron guardar las categorías. Por favor, intenta de nuevo.');
+        return false;
       }
     } catch (error) {
       console.error('Error al guardar categorías:', error);
-      alert('Error al guardar categorías. Por favor, intenta de nuevo.');
+      return false;
     }
   };
 
