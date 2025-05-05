@@ -2,7 +2,7 @@
   "name": "mi-app-personal",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://juance.github.io/mi-app-personal",
+  "homepage": "https://juance.github.io/mi-app-persona",
   "dependencies": {
     "@fontsource/poppins": "^5.2.5",
     "@supabase/supabase-js": "^2.49.4",
