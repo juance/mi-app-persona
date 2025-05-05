@@ -316,6 +316,73 @@ const mapStoreNameToTable = (storeName) => {
 };
 
 /**
+ * Sincronizar transacciones con soporte para moneda
+ * @param {string} userId - ID del usuario
+ * @returns {Promise<Object>} - Resultado de la sincronización
+ */
+export const syncTransactionsWithCurrency = async (userId) => {
+  try {
+    if (!checkOnlineStatus()) {
+      return { success: false, message: 'No hay conexión a Internet' };
+    }
+
+    if (!userId) {
+      return { success: false, message: 'No se proporcionó ID de usuario' };
+    }
+
+    // Obtener transacciones locales
+    const localTransactions = await getFromIndexedDB('transactions');
+
+    // Obtener transacciones del servidor
+    const { data: serverTransactions, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) {
+      throw error;
+    }
+
+    // Crear mapa de transacciones del servidor por ID
+    const serverTransactionsMap = {};
+    serverTransactions.forEach(transaction => {
+      serverTransactionsMap[transaction.id] = transaction;
+    });
+
+    // Actualizar transacciones locales con moneda
+    const updatedTransactions = localTransactions.map(transaction => {
+      // Si la transacción no tiene moneda, establecer ARS por defecto
+      if (!transaction.currency) {
+        transaction.currency = 'ARS';
+      }
+
+      // Si la transacción existe en el servidor y tiene moneda, usar la del servidor
+      if (serverTransactionsMap[transaction.id] && serverTransactionsMap[transaction.id].currency) {
+        transaction.currency = serverTransactionsMap[transaction.id].currency;
+      }
+
+      return transaction;
+    });
+
+    // Guardar transacciones actualizadas
+    await saveToIndexedDB('transactions', updatedTransactions);
+
+    // Sincronizar con el servidor
+    return await syncFromServer('transactions', null, {
+      userId,
+      clearBeforeSync: false
+    });
+  } catch (error) {
+    console.error('Error al sincronizar transacciones con moneda:', error);
+    return {
+      success: false,
+      message: `Error al sincronizar transacciones: ${error.message}`,
+      error
+    };
+  }
+};
+
+/**
  * Sincronizar datos desde el servidor
  * @param {string} storeName - Nombre del almacén
  * @param {string} tableName - Nombre de la tabla
@@ -392,7 +459,6 @@ export const syncAllUserData = async (userId) => {
   try {
     // Lista de almacenes a sincronizar
     const stores = [
-      'transactions',
       'tasks',
       'events',
       'investments',
@@ -400,27 +466,37 @@ export const syncAllUserData = async (userId) => {
     ];
 
     // Sincronizar cada almacén
-    const results = await Promise.allSettled(
-      stores.map(store =>
+    const results = await Promise.allSettled([
+      // Sincronizar transacciones con soporte para moneda
+      syncTransactionsWithCurrency(userId),
+      // Sincronizar otros almacenes
+      ...stores.map(store =>
         syncFromServer(store, null, {
           userId,
           clearBeforeSync: true
         })
       )
-    );
+    ]);
 
     // Contar resultados
     const succeeded = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
     const failed = results.filter(r => r.status === 'rejected' || !r.value.success).length;
 
+    // Preparar resultados detallados
+    const detailedResults = results.map((r, i) => {
+      // El primer resultado es para transacciones con moneda
+      const store = i === 0 ? 'transactions' : stores[i - 1];
+      return {
+        store,
+        success: r.status === 'fulfilled' && r.value.success,
+        message: r.status === 'fulfilled' ? r.value.message : r.reason.message
+      };
+    });
+
     return {
       success: failed === 0,
       message: `Sincronización completa: ${succeeded} almacenes sincronizados, ${failed} fallidos`,
-      results: results.map((r, i) => ({
-        store: stores[i],
-        success: r.status === 'fulfilled' && r.value.success,
-        message: r.status === 'fulfilled' ? r.value.message : r.reason.message
-      }))
+      results: detailedResults
     };
   } catch (error) {
     console.error('Error durante la sincronización completa:', error);

@@ -2,6 +2,8 @@ import React, { memo, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { FiArrowUp, FiArrowDown, FiEdit2, FiTrash2, FiDollarSign, FiCreditCard, FiCheck } from 'react-icons/fi';
 import SwipeableCard from '../common/SwipeableCard';
+import CurrencyConverter from '../common/CurrencyConverter';
+import { formatCurrency } from '../../services/currencyService';
 
 const TransactionContainer = styled.div`
   background-color: var(--card-bg);
@@ -145,12 +147,7 @@ const EditAction = styled(SwipeAction)`
   background-color: var(--primary-color);
 `;
 
-const formatCurrency = (amount, currency = 'ARS') => {
-  return new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency
-  }).format(amount);
-};
+
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -291,6 +288,20 @@ const TransactionItem = ({ transaction, onEdit, onDelete }) => {
 
           <TransactionAmount type={type} style={{ marginLeft: 'auto' }}>
             {type === 'income' ? '+' : '-'} {formattedAmount}
+            {/* Mostrar conversión de moneda */}
+            {currency === 'ARS' ? (
+              <CurrencyConverter
+                amount={parseFloat(amount)}
+                fromCurrency="ARS"
+                toCurrency="USD"
+              />
+            ) : (
+              <CurrencyConverter
+                amount={parseFloat(amount)}
+                fromCurrency="USD"
+                toCurrency="ARS"
+              />
+            )}
           </TransactionAmount>
         </TransactionInfo>
       </SwipeableCard>
@@ -321,6 +332,20 @@ const TransactionItem = ({ transaction, onEdit, onDelete }) => {
       <TransactionAmountContainer>
         <TransactionAmount type={type}>
           {type === 'income' ? '+' : '-'} {formattedAmount}
+          {/* Mostrar conversión de moneda */}
+          {currency === 'ARS' ? (
+            <CurrencyConverter
+              amount={parseFloat(amount)}
+              fromCurrency="ARS"
+              toCurrency="USD"
+            />
+          ) : (
+            <CurrencyConverter
+              amount={parseFloat(amount)}
+              fromCurrency="USD"
+              toCurrency="ARS"
+            />
+          )}
         </TransactionAmount>
 
         <TransactionActions>
