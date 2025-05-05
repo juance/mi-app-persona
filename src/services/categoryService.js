@@ -1,5 +1,19 @@
 import { supabase } from './supabase';
 
+// Clave para almacenar las categorías de objetivos financieros en localStorage
+const FINANCIAL_GOALS_CATEGORIES_KEY = 'financial_goals_categories';
+
+// Categorías predeterminadas para objetivos financieros
+const DEFAULT_FINANCIAL_GOALS_CATEGORIES = [
+  { name: 'Ahorros', value: 'savings' },
+  { name: 'Inversión', value: 'investment' },
+  { name: 'Compra', value: 'purchase' },
+  { name: 'Viaje', value: 'travel' },
+  { name: 'Educación', value: 'education' },
+  { name: 'Hogar', value: 'home' },
+  { name: 'Otro', value: 'other' }
+];
+
 /**
  * Obtiene todas las categorías
  * @returns {Promise<Array>} - Lista de categorías
@@ -181,5 +195,39 @@ export const deleteCategory = async (id) => {
   } catch (error) {
     console.error('Error in deleteCategory:', error);
     throw error;
+  }
+};
+
+/**
+ * Obtiene las categorías de objetivos financieros
+ * @returns {Array} - Lista de categorías
+ */
+export const getFinancialGoalsCategories = () => {
+  try {
+    const categoriesJson = localStorage.getItem(FINANCIAL_GOALS_CATEGORIES_KEY);
+
+    if (!categoriesJson) {
+      return DEFAULT_FINANCIAL_GOALS_CATEGORIES;
+    }
+
+    return JSON.parse(categoriesJson);
+  } catch (error) {
+    console.error('Error al obtener categorías de objetivos financieros:', error);
+    return DEFAULT_FINANCIAL_GOALS_CATEGORIES;
+  }
+};
+
+/**
+ * Guarda las categorías de objetivos financieros
+ * @param {Array} categories - Lista de categorías
+ * @returns {boolean} - Indica si se guardaron correctamente
+ */
+export const saveFinancialGoalsCategories = (categories) => {
+  try {
+    localStorage.setItem(FINANCIAL_GOALS_CATEGORIES_KEY, JSON.stringify(categories));
+    return true;
+  } catch (error) {
+    console.error('Error al guardar categorías de objetivos financieros:', error);
+    return false;
   }
 };

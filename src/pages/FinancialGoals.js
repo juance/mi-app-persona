@@ -4,7 +4,9 @@ import GoalChart from '../components/FinancialGoals/GoalChart';
 import GoalFilters from '../components/FinancialGoals/GoalFilters';
 import GoalForm from '../components/FinancialGoals/GoalForm';
 import GoalList from '../components/FinancialGoals/GoalList';
+import CategoryManager from '../components/FinancialGoals/CategoryManager';
 import { getFinancialGoals, saveFinancialGoals, addFinancialGoal, updateFinancialGoal, deleteFinancialGoal } from '../services/simpleStorage';
+import { getFinancialGoalsCategories, saveFinancialGoalsCategories } from '../services/categoryService';
 
 const FinancialGoalsContainer = styled.div`
   max-width: 1200px;
@@ -127,6 +129,8 @@ const FinancialGoals = () => {
   });
   const [filteredGoals, setFilteredGoals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showCategoryManager, setShowCategoryManager] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   // Cargar metas financieras desde el almacenamiento local
   useEffect(() => {
@@ -145,6 +149,21 @@ const FinancialGoals = () => {
     };
 
     loadGoals();
+  }, []);
+
+  // Cargar categorías
+  useEffect(() => {
+    const loadCategories = () => {
+      try {
+        const savedCategories = getFinancialGoalsCategories();
+        console.log('Categorías cargadas:', savedCategories);
+        setCategories(savedCategories || []);
+      } catch (error) {
+        console.error('Error al cargar categorías:', error);
+      }
+    };
+
+    loadCategories();
   }, []);
 
   // Aplicar filtros y ordenamiento cuando cambian los filtros o las metas
@@ -290,6 +309,26 @@ const FinancialGoals = () => {
     }
   };
 
+  const handleSaveCategories = (updatedCategories) => {
+    try {
+      // Guardar categorías en el almacenamiento local
+      const success = saveFinancialGoalsCategories(updatedCategories);
+
+      if (success) {
+        console.log('Categorías guardadas correctamente:', updatedCategories);
+        // Actualizar el estado
+        setCategories(updatedCategories);
+        alert('Categorías guardadas correctamente.');
+      } else {
+        console.error('No se pudieron guardar las categorías');
+        alert('No se pudieron guardar las categorías. Por favor, intenta de nuevo.');
+      }
+    } catch (error) {
+      console.error('Error al guardar categorías:', error);
+      alert('Error al guardar categorías. Por favor, intenta de nuevo.');
+    }
+  };
+
   return (
     <FinancialGoalsContainer>
       <FinancialGoalsHeader>
@@ -304,10 +343,37 @@ const FinancialGoals = () => {
       <GoalsSection>
         <GoalsHeader>
           <SectionTitle>Objetivos Financieros</SectionTitle>
-          <AddGoalButton onClick={() => setShowForm(!showForm)}>
-            {showForm ? 'Cancelar' : 'Nuevo Objetivo'}
-          </AddGoalButton>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <AddGoalButton
+              onClick={() => {
+                setShowCategoryManager(!showCategoryManager);
+                setShowForm(false);
+              }}
+              style={{
+                backgroundColor: showCategoryManager ? 'var(--primary-color)' : 'var(--text-medium)',
+                boxShadow: showCategoryManager ? '0 4px 6px rgba(99, 102, 241, 0.2)' : 'none'
+              }}
+            >
+              {showCategoryManager ? 'Cerrar Categorías' : 'Gestionar Categorías'}
+            </AddGoalButton>
+            <AddGoalButton
+              onClick={() => {
+                setShowForm(!showForm);
+                setShowCategoryManager(false);
+              }}
+            >
+              {showForm ? 'Cancelar' : 'Nuevo Objetivo'}
+            </AddGoalButton>
+          </div>
         </GoalsHeader>
+
+        {/* Gestor de categorías */}
+        {showCategoryManager && (
+          <CategoryManager
+            categories={categories}
+            onSaveCategories={handleSaveCategories}
+          />
+        )}
 
         {/* Formulario para agregar nuevas metas */}
         {showForm && (

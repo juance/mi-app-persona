@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getFinancialGoalsCategories } from '../../services/categoryService';
 import styled from 'styled-components';
 
 const FormContainer = styled.div`
@@ -131,9 +132,20 @@ const initialFormState = {
   deadline: ''
 };
 
-const GoalForm = ({ onSubmit, onCancel }) => {
-  const [formData, setFormData] = useState(initialFormState);
+const GoalForm = ({ onSubmit, onCancel, goal }) => {
+  const [formData, setFormData] = useState(goal || initialFormState);
   const [error, setError] = useState('');
+  const [categories, setCategories] = useState([]);
+
+  // Cargar categorías al montar el componente
+  useEffect(() => {
+    const loadCategories = () => {
+      const goalCategories = getFinancialGoalsCategories();
+      setCategories(goalCategories);
+    };
+
+    loadCategories();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -226,13 +238,11 @@ const GoalForm = ({ onSubmit, onCancel }) => {
             onChange={handleChange}
             required
           >
-            <option value="savings">Ahorros</option>
-            <option value="investment">Inversión</option>
-            <option value="purchase">Compra</option>
-            <option value="travel">Viaje</option>
-            <option value="education">Educación</option>
-            <option value="home">Hogar</option>
-            <option value="other">Otro</option>
+            {categories.map((category) => (
+              <option key={category.value} value={category.value}>
+                {category.name}
+              </option>
+            ))}
           </Select>
         </FormGroup>
 
