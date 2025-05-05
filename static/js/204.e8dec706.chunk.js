@@ -2,34 +2,37 @@
   background-color: var(--card-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--card-shadow);
-  padding: 24px;
-  margin-bottom: 32px;
+  padding: 16px;
+  margin-bottom: 24px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 `,s=o.Ay.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 `,l=o.Ay.div`
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 `,c=o.Ay.h2`
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 600;
   color: var(--text-dark);
-  min-width: 200px;
+  min-width: 180px;
   text-align: center;
 `,p=o.Ay.button`
   background: none;
   border: none;
   color: var(--text-medium);
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 6px;
   border-radius: 50%;
   transition: all var(--transition-speed);
 
@@ -37,14 +40,14 @@
     color: var(--primary-color);
     background-color: rgba(99, 102, 241, 0.1);
   }
-`,g=o.Ay.button`
+`,x=o.Ay.button`
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   transition: all var(--transition-speed);
 
@@ -53,33 +56,33 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
   }
-`,x=o.Ay.div`
+`,g=o.Ay.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 6px;
 
   @media (max-width: 768px) {
-    gap: 4px;
+    gap: 3px;
   }
 `,u=o.Ay.div`
   text-align: center;
   font-weight: 600;
   color: var(--text-medium);
-  padding: 8px;
-  font-size: 0.9rem;
+  padding: 6px 4px;
+  font-size: 0.8rem;
 `,m=o.Ay.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 6px;
 
   @media (max-width: 768px) {
-    gap: 4px;
+    gap: 3px;
   }
 `,h=o.Ay.div`
   aspect-ratio: 1;
   border-radius: var(--border-radius);
-  padding: 8px;
+  padding: 6px 4px;
   cursor: pointer;
   position: relative;
   background-color: ${e=>e.isToday?"rgba(99, 102, 241, 0.1)":e.isSelected?"rgba(99, 102, 241, 0.2)":e.isCurrentMonth?"var(--bg-light)":"var(--bg-medium)"};
@@ -89,32 +92,38 @@
 
   &:hover {
     background-color: ${e=>e.isToday?"rgba(99, 102, 241, 0.2)":"rgba(99, 102, 241, 0.1)"};
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   @media (max-width: 768px) {
-    padding: 4px;
+    padding: 3px 2px;
   }
 `,v=o.Ay.div`
-  font-size: 0.9rem;
-  margin-bottom: 4px;
+  font-size: 0.85rem;
+  margin-bottom: 2px;
   text-align: center;
 
   @media (max-width: 768px) {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    margin-bottom: 1px;
   }
 `,b=o.Ay.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 2px;
+  gap: 1px;
   justify-content: center;
 `,y=o.Ay.div`
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background-color: ${e=>{switch(e.category){case"personal":return"var(--primary-color)";case"familia":return"var(--secondary-color)";case"duchene":return"var(--accent-color)";case"lavadero":return"var(--danger-color)";case"vapea":return"var(--primary-dark)";default:return"var(--text-light)"}}};
-`,f=e=>{let{events:r,onSelectDate:t}=e;const[o,f]=(0,a.useState)(new Date),[w,j]=(0,a.useState)(new Date),k=new Date(o.getFullYear(),o.getMonth(),1),A=(new Date(o.getFullYear(),o.getMonth()+1,0),k.getDay()),D=0===A?6:A-1,C=new Date(k);C.setDate(C.getDate()-D);const z=[],S=new Date(C);for(let a=0;a<42;a++)z.push(new Date(S)),S.setDate(S.getDate()+1);const _=e=>{const r=new Date;return e.getDate()===r.getDate()&&e.getMonth()===r.getMonth()&&e.getFullYear()===r.getFullYear()},M=e=>e.getDate()===w.getDate()&&e.getMonth()===w.getMonth()&&e.getFullYear()===w.getFullYear(),E=e=>e.getMonth()===o.getMonth();return(0,i.jsxs)(d,{children:[(0,i.jsxs)(s,{children:[(0,i.jsxs)(l,{children:[(0,i.jsx)(p,{onClick:()=>{const e=new Date(o);e.setMonth(e.getMonth()-1),f(e)},children:(0,i.jsx)(n.irw,{})}),(0,i.jsxs)(c,{children:[["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][o.getMonth()]," ",o.getFullYear()]}),(0,i.jsx)(p,{onClick:()=>{const e=new Date(o);e.setMonth(e.getMonth()+1),f(e)},children:(0,i.jsx)(n.fOo,{})})]}),(0,i.jsx)(g,{onClick:()=>{f(new Date),j(new Date),t(new Date)},children:"Hoy"})]}),(0,i.jsx)(x,{children:["Lun","Mar","Mi\xe9","Jue","Vie","S\xe1b","Dom"].map((e=>(0,i.jsx)(u,{children:e},e)))}),(0,i.jsx)(m,{children:z.map(((e,a)=>{const o=(n=e,r.filter((e=>{const r=new Date(e.date);return r.getDate()===n.getDate()&&r.getMonth()===n.getMonth()&&r.getFullYear()===n.getFullYear()})));var n;return(0,i.jsxs)(h,{isToday:_(e),isSelected:M(e),isCurrentMonth:E(e),onClick:()=>(e=>{j(e),t(e)})(e),children:[(0,i.jsx)(v,{children:e.getDate()}),(0,i.jsx)(b,{children:o.slice(0,3).map(((e,r)=>(0,i.jsx)(y,{category:e.category},r)))})]},a)}))})]})},w=o.Ay.div`
+
+  @media (max-width: 768px) {
+    width: 3px;
+    height: 3px;
+  }
+`,f=e=>{let{events:r,onSelectDate:t}=e;const[o,f]=(0,a.useState)(new Date),[w,j]=(0,a.useState)(new Date),k=new Date(o.getFullYear(),o.getMonth(),1),A=(new Date(o.getFullYear(),o.getMonth()+1,0),k.getDay()),D=0===A?6:A-1,C=new Date(k);C.setDate(C.getDate()-D);const z=[],S=new Date(C);for(let a=0;a<42;a++)z.push(new Date(S)),S.setDate(S.getDate()+1);const _=e=>{const r=new Date;return e.getDate()===r.getDate()&&e.getMonth()===r.getMonth()&&e.getFullYear()===r.getFullYear()},M=e=>e.getDate()===w.getDate()&&e.getMonth()===w.getMonth()&&e.getFullYear()===w.getFullYear(),E=e=>e.getMonth()===o.getMonth();return(0,i.jsxs)(d,{children:[(0,i.jsxs)(s,{children:[(0,i.jsxs)(l,{children:[(0,i.jsx)(p,{onClick:()=>{const e=new Date(o);e.setMonth(e.getMonth()-1),f(e)},children:(0,i.jsx)(n.irw,{})}),(0,i.jsxs)(c,{children:[["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][o.getMonth()]," ",o.getFullYear()]}),(0,i.jsx)(p,{onClick:()=>{const e=new Date(o);e.setMonth(e.getMonth()+1),f(e)},children:(0,i.jsx)(n.fOo,{})})]}),(0,i.jsx)(x,{onClick:()=>{f(new Date),j(new Date),t(new Date)},children:"Hoy"})]}),(0,i.jsx)(g,{children:["Lun","Mar","Mi\xe9","Jue","Vie","S\xe1b","Dom"].map((e=>(0,i.jsx)(u,{children:e},e)))}),(0,i.jsx)(m,{children:z.map(((e,a)=>{const o=(n=e,r.filter((e=>{const r=new Date(e.date);return r.getDate()===n.getDate()&&r.getMonth()===n.getMonth()&&r.getFullYear()===n.getFullYear()})));var n;return(0,i.jsxs)(h,{isToday:_(e),isSelected:M(e),isCurrentMonth:E(e),onClick:()=>(e=>{j(e),t(e)})(e),children:[(0,i.jsx)(v,{children:e.getDate()}),(0,i.jsx)(b,{children:o.slice(0,3).map(((e,r)=>(0,i.jsx)(y,{category:e.category},r)))})]},a)}))})]})},w=o.Ay.div`
   margin-top: 20px;
 `,j=o.Ay.h3`
   margin: 0 0 16px 0;
@@ -373,7 +382,7 @@
     background-color: var(--bg-dark);
     color: var(--text-light);
   }
-`,U=e=>{let{event:r,selectedDate:t,onSubmit:o,onCancel:d}=e;const[s,l]=(0,a.useState)({title:"",description:"",date:t?t.toISOString().split("T")[0]:(new Date).toISOString().split("T")[0],start_time:"",end_time:"",location:"",category:"personal"}),[c,p]=(0,a.useState)(""),g=!(null===r||void 0===r||!r.id);(0,a.useEffect)((()=>{r?l({title:r.title||"",description:r.description||"",date:r.date||(t?t.toISOString().split("T")[0]:(new Date).toISOString().split("T")[0]),start_time:r.start_time||"",end_time:r.end_time||"",location:r.location||"",category:r.category||"personal"}):t&&l((e=>({...e,date:t.toISOString().split("T")[0]})))}),[r,t]);const x=e=>{const{name:r,value:t}=e.target;l((e=>({...e,[r]:t})))};return(0,i.jsxs)(T,{children:[(0,i.jsxs)(q,{children:[(0,i.jsx)(P,{children:g?"Editar Evento":"Crear Nuevo Evento"}),(0,i.jsx)(I,{onClick:d,children:(0,i.jsx)(n.yGN,{})})]}),c&&(0,i.jsx)(L,{children:c}),(0,i.jsxs)("form",{onSubmit:e=>{e.preventDefault(),s.title.trim()?s.start_time&&s.end_time&&s.start_time>s.end_time?p("La hora de inicio debe ser anterior a la hora de fin."):(o({...s,id:(null===r||void 0===r?void 0:r.id)||Date.now()}),p("")):p("Por favor ingresa un t\xedtulo para el evento.")},children:[(0,i.jsxs)(N,{children:[(0,i.jsxs)(W,{fullWidth:!0,children:[(0,i.jsx)(G,{htmlFor:"title",required:!0,children:"T\xedtulo"}),(0,i.jsx)(H,{type:"text",id:"title",name:"title",value:s.title,onChange:x,placeholder:"Ej: Reuni\xf3n de trabajo",required:!0})]}),(0,i.jsxs)(W,{children:[(0,i.jsx)(G,{htmlFor:"date",required:!0,children:"Fecha"}),(0,i.jsx)(H,{type:"date",id:"date",name:"date",value:s.date,onChange:x,required:!0})]}),(0,i.jsxs)(W,{children:[(0,i.jsx)(G,{htmlFor:"category",required:!0,children:"Categor\xeda"}),(0,i.jsxs)(V,{id:"category",name:"category",value:s.category,onChange:x,required:!0,children:[(0,i.jsx)("option",{value:"personal",children:"Personal"}),(0,i.jsx)("option",{value:"familia",children:"Familia"}),(0,i.jsx)("option",{value:"duchene",children:"Duchene"}),(0,i.jsx)("option",{value:"lavadero",children:"Lavadero"}),(0,i.jsx)("option",{value:"vapea",children:"Vapea Conmigo"}),(0,i.jsx)("option",{value:"other",children:"Otro"})]})]}),(0,i.jsxs)(W,{children:[(0,i.jsx)(G,{htmlFor:"start_time",children:"Hora de inicio"}),(0,i.jsx)(H,{type:"time",id:"start_time",name:"start_time",value:s.start_time,onChange:x})]}),(0,i.jsxs)(W,{children:[(0,i.jsx)(G,{htmlFor:"end_time",children:"Hora de fin"}),(0,i.jsx)(H,{type:"time",id:"end_time",name:"end_time",value:s.end_time,onChange:x})]}),(0,i.jsxs)(W,{fullWidth:!0,children:[(0,i.jsx)(G,{htmlFor:"location",children:"Ubicaci\xf3n"}),(0,i.jsx)(H,{type:"text",id:"location",name:"location",value:s.location,onChange:x,placeholder:"Ej: Oficina central"})]}),(0,i.jsxs)(W,{fullWidth:!0,children:[(0,i.jsx)(G,{htmlFor:"description",children:"Descripci\xf3n"}),(0,i.jsx)(J,{id:"description",name:"description",value:s.description,onChange:x,placeholder:"A\xf1ade detalles sobre este evento..."})]})]}),(0,i.jsxs)(X,{children:[(0,i.jsx)(B,{type:"submit",children:g?"Guardar Cambios":"Crear Evento"}),(0,i.jsx)(R,{type:"button",onClick:d,children:"Cancelar"})]})]})]})},K=o.Ay.div`
+`,U=e=>{let{event:r,selectedDate:t,onSubmit:o,onCancel:d}=e;const[s,l]=(0,a.useState)({title:"",description:"",date:t?t.toISOString().split("T")[0]:(new Date).toISOString().split("T")[0],start_time:"",end_time:"",location:"",category:"personal"}),[c,p]=(0,a.useState)(""),x=!(null===r||void 0===r||!r.id);(0,a.useEffect)((()=>{r?l({title:r.title||"",description:r.description||"",date:r.date||(t?t.toISOString().split("T")[0]:(new Date).toISOString().split("T")[0]),start_time:r.start_time||"",end_time:r.end_time||"",location:r.location||"",category:r.category||"personal"}):t&&l((e=>({...e,date:t.toISOString().split("T")[0]})))}),[r,t]);const g=e=>{const{name:r,value:t}=e.target;l((e=>({...e,[r]:t})))};return(0,i.jsxs)(T,{children:[(0,i.jsxs)(q,{children:[(0,i.jsx)(P,{children:x?"Editar Evento":"Crear Nuevo Evento"}),(0,i.jsx)(I,{onClick:d,children:(0,i.jsx)(n.yGN,{})})]}),c&&(0,i.jsx)(L,{children:c}),(0,i.jsxs)("form",{onSubmit:e=>{e.preventDefault(),s.title.trim()?s.start_time&&s.end_time&&s.start_time>s.end_time?p("La hora de inicio debe ser anterior a la hora de fin."):(o({...s,id:(null===r||void 0===r?void 0:r.id)||Date.now()}),p("")):p("Por favor ingresa un t\xedtulo para el evento.")},children:[(0,i.jsxs)(N,{children:[(0,i.jsxs)(W,{fullWidth:!0,children:[(0,i.jsx)(G,{htmlFor:"title",required:!0,children:"T\xedtulo"}),(0,i.jsx)(H,{type:"text",id:"title",name:"title",value:s.title,onChange:g,placeholder:"Ej: Reuni\xf3n de trabajo",required:!0})]}),(0,i.jsxs)(W,{children:[(0,i.jsx)(G,{htmlFor:"date",required:!0,children:"Fecha"}),(0,i.jsx)(H,{type:"date",id:"date",name:"date",value:s.date,onChange:g,required:!0})]}),(0,i.jsxs)(W,{children:[(0,i.jsx)(G,{htmlFor:"category",required:!0,children:"Categor\xeda"}),(0,i.jsxs)(V,{id:"category",name:"category",value:s.category,onChange:g,required:!0,children:[(0,i.jsx)("option",{value:"personal",children:"Personal"}),(0,i.jsx)("option",{value:"familia",children:"Familia"}),(0,i.jsx)("option",{value:"duchene",children:"Duchene"}),(0,i.jsx)("option",{value:"lavadero",children:"Lavadero"}),(0,i.jsx)("option",{value:"vapea",children:"Vapea Conmigo"}),(0,i.jsx)("option",{value:"other",children:"Otro"})]})]}),(0,i.jsxs)(W,{children:[(0,i.jsx)(G,{htmlFor:"start_time",children:"Hora de inicio"}),(0,i.jsx)(H,{type:"time",id:"start_time",name:"start_time",value:s.start_time,onChange:g})]}),(0,i.jsxs)(W,{children:[(0,i.jsx)(G,{htmlFor:"end_time",children:"Hora de fin"}),(0,i.jsx)(H,{type:"time",id:"end_time",name:"end_time",value:s.end_time,onChange:g})]}),(0,i.jsxs)(W,{fullWidth:!0,children:[(0,i.jsx)(G,{htmlFor:"location",children:"Ubicaci\xf3n"}),(0,i.jsx)(H,{type:"text",id:"location",name:"location",value:s.location,onChange:g,placeholder:"Ej: Oficina central"})]}),(0,i.jsxs)(W,{fullWidth:!0,children:[(0,i.jsx)(G,{htmlFor:"description",children:"Descripci\xf3n"}),(0,i.jsx)(J,{id:"description",name:"description",value:s.description,onChange:g,placeholder:"A\xf1ade detalles sobre este evento..."})]})]}),(0,i.jsxs)(X,{children:[(0,i.jsx)(B,{type:"submit",children:x?"Guardar Cambios":"Crear Evento"}),(0,i.jsx)(R,{type:"button",onClick:d,children:"Cancelar"})]})]})]})},K=o.Ay.div`
   max-width: 1200px;
   margin: 0 auto;
 `,Q=o.Ay.div`
@@ -467,4 +476,4 @@
     justify-content: center;
   }
 `,ae=[],oe=()=>{const[e,r]=(0,a.useState)(ae),[t,o]=(0,a.useState)(new Date),[d,s]=(0,a.useState)(!1),[l,c]=(0,a.useState)(null);return(0,i.jsxs)(K,{children:[(0,i.jsxs)(Q,{children:[(0,i.jsx)("h1",{children:"Calendario"}),(0,i.jsx)("p",{children:"Organiza tus eventos y citas"})]}),(0,i.jsx)(f,{events:e,onSelectDate:e=>{o(e)}}),(0,i.jsxs)(Z,{children:[(0,i.jsxs)(ee,{children:[(0,i.jsx)(re,{children:"Eventos"}),(0,i.jsxs)(te,{onClick:()=>{c(null),s(!d)},children:[(0,i.jsx)(n.GGD,{}),d?"Cancelar":"Nuevo Evento"]})]}),d&&(0,i.jsx)(U,{event:l,selectedDate:t,onSubmit:e=>{l?(r((r=>r.map((r=>r.id===e.id?e:r)))),c(null)):r((r=>[...r,e])),s(!1)},onCancel:()=>{s(!1),c(null)}}),(0,i.jsx)(O,{events:e,selectedDate:t,onEditEvent:e=>{c(e),s(!0)},onDeleteEvent:e=>{window.confirm("\xbfEst\xe1s seguro de que deseas eliminar este evento?")&&r((r=>r.filter((r=>r.id!==e))))}})]})]})}}}]);
-//# sourceMappingURL=204.d73ba94d.chunk.js.map
+//# sourceMappingURL=204.e8dec706.chunk.js.map
