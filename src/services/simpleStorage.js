@@ -538,3 +538,112 @@ export const deleteFinancialGoal = (id) => {
     return false;
   }
 };
+
+// ==================== EVENTOS DEL CALENDARIO ====================
+
+/**
+ * Guardar eventos en localStorage
+ * @param {Array} events - Eventos a guardar
+ */
+export const saveEvents = (events) => {
+  return saveData('events', events);
+};
+
+/**
+ * Obtener eventos de localStorage
+ * @returns {Array} - Eventos guardados o array vacío
+ */
+export const getEvents = () => {
+  return getData('events', []);
+};
+
+/**
+ * Agregar un evento
+ * @param {Object} event - Evento a agregar
+ */
+export const addEvent = (event) => {
+  try {
+    // Generar ID si no tiene
+    const eventWithId = {
+      ...event,
+      id: event.id || generateId()
+    };
+
+    // Obtener eventos actuales
+    const currentEvents = getEvents();
+
+    // Agregar el nuevo evento
+    const updatedEvents = [...currentEvents, eventWithId];
+
+    // Guardar eventos actualizados
+    saveEvents(updatedEvents);
+
+    return eventWithId;
+  } catch (error) {
+    console.error('Error al agregar evento:', error);
+    return null;
+  }
+};
+
+/**
+ * Actualizar un evento
+ * @param {string} id - ID del evento
+ * @param {Object} updates - Datos a actualizar
+ */
+export const updateEvent = (id, updates) => {
+  try {
+    // Obtener eventos actuales
+    const currentEvents = getEvents();
+
+    // Buscar el evento
+    const index = currentEvents.findIndex(e => e.id === id);
+
+    if (index === -1) {
+      console.error(`No se encontró el evento con ID ${id}`);
+      return false;
+    }
+
+    // Actualizar el evento
+    const updatedEvents = [...currentEvents];
+    updatedEvents[index] = {
+      ...updatedEvents[index],
+      ...updates
+    };
+
+    // Guardar eventos actualizados
+    saveEvents(updatedEvents);
+
+    return updatedEvents[index];
+  } catch (error) {
+    console.error('Error al actualizar evento:', error);
+    return null;
+  }
+};
+
+/**
+ * Eliminar un evento
+ * @param {string} id - ID del evento
+ */
+export const deleteEvent = (id) => {
+  try {
+    // Obtener eventos actuales
+    const currentEvents = getEvents();
+
+    // Filtrar el evento a eliminar
+    const updatedEvents = currentEvents.filter(e => e.id !== id);
+
+    // Si no se eliminó ningún evento, retornar false
+    if (updatedEvents.length === currentEvents.length) {
+      console.error(`No se encontró el evento con ID ${id}`);
+      return false;
+    }
+
+    // Guardar eventos actualizados
+    saveEvents(updatedEvents);
+
+    return true;
+  } catch (error) {
+    console.error('Error al eliminar evento:', error);
+    return false;
+  }
+};
