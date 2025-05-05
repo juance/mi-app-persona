@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/mi-app-persona/static/css/main.8b080a66.css",
-    "main.js": "/mi-app-persona/static/js/main.a0be0e96.js",
-    "static/js/604.9996142c.chunk.js": "/mi-app-persona/static/js/604.9996142c.chunk.js",
+    "main.js": "/mi-app-persona/static/js/main.980c1dc6.js",
+    "static/js/604.97250903.chunk.js": "/mi-app-persona/static/js/604.97250903.chunk.js",
     "static/js/659.5e2534be.chunk.js": "/mi-app-persona/static/js/659.5e2534be.chunk.js",
-    "static/js/84.115a1f67.chunk.js": "/mi-app-persona/static/js/84.115a1f67.chunk.js",
+    "static/js/84.35fe3849.chunk.js": "/mi-app-persona/static/js/84.35fe3849.chunk.js",
     "static/js/138.ddaacf8e.chunk.js": "/mi-app-persona/static/js/138.ddaacf8e.chunk.js",
     "static/js/217.a67fc3b3.chunk.js": "/mi-app-persona/static/js/217.a67fc3b3.chunk.js",
     "static/js/204.226c4e43.chunk.js": "/mi-app-persona/static/js/204.226c4e43.chunk.js",
     "static/js/418.4ce58810.chunk.js": "/mi-app-persona/static/js/418.4ce58810.chunk.js",
     "static/js/311.a33effc0.chunk.js": "/mi-app-persona/static/js/311.a33effc0.chunk.js",
     "static/js/37.fdfa81f1.chunk.js": "/mi-app-persona/static/js/37.fdfa81f1.chunk.js",
-    "static/js/962.ef9d9368.chunk.js": "/mi-app-persona/static/js/962.ef9d9368.chunk.js",
+    "static/js/962.4bec6ddb.chunk.js": "/mi-app-persona/static/js/962.4bec6ddb.chunk.js",
     "static/js/198.735d525b.chunk.js": "/mi-app-persona/static/js/198.735d525b.chunk.js",
     "static/js/90.793c3bdd.chunk.js": "/mi-app-persona/static/js/90.793c3bdd.chunk.js",
     "static/js/453.63db704f.chunk.js": "/mi-app-persona/static/js/453.63db704f.chunk.js",
@@ -41,17 +41,17 @@
     "static/media/poppins-latin-ext-700-normal.woff2": "/mi-app-persona/static/media/poppins-latin-ext-700-normal.51cc1e159ae5f0b8ec5c.woff2",
     "index.html": "/mi-app-persona/index.html",
     "main.8b080a66.css.map": "/mi-app-persona/static/css/main.8b080a66.css.map",
-    "main.a0be0e96.js.map": "/mi-app-persona/static/js/main.a0be0e96.js.map",
-    "604.9996142c.chunk.js.map": "/mi-app-persona/static/js/604.9996142c.chunk.js.map",
+    "main.980c1dc6.js.map": "/mi-app-persona/static/js/main.980c1dc6.js.map",
+    "604.97250903.chunk.js.map": "/mi-app-persona/static/js/604.97250903.chunk.js.map",
     "659.5e2534be.chunk.js.map": "/mi-app-persona/static/js/659.5e2534be.chunk.js.map",
-    "84.115a1f67.chunk.js.map": "/mi-app-persona/static/js/84.115a1f67.chunk.js.map",
+    "84.35fe3849.chunk.js.map": "/mi-app-persona/static/js/84.35fe3849.chunk.js.map",
     "138.ddaacf8e.chunk.js.map": "/mi-app-persona/static/js/138.ddaacf8e.chunk.js.map",
     "217.a67fc3b3.chunk.js.map": "/mi-app-persona/static/js/217.a67fc3b3.chunk.js.map",
     "204.226c4e43.chunk.js.map": "/mi-app-persona/static/js/204.226c4e43.chunk.js.map",
     "418.4ce58810.chunk.js.map": "/mi-app-persona/static/js/418.4ce58810.chunk.js.map",
     "311.a33effc0.chunk.js.map": "/mi-app-persona/static/js/311.a33effc0.chunk.js.map",
     "37.fdfa81f1.chunk.js.map": "/mi-app-persona/static/js/37.fdfa81f1.chunk.js.map",
-    "962.ef9d9368.chunk.js.map": "/mi-app-persona/static/js/962.ef9d9368.chunk.js.map",
+    "962.4bec6ddb.chunk.js.map": "/mi-app-persona/static/js/962.4bec6ddb.chunk.js.map",
     "198.735d525b.chunk.js.map": "/mi-app-persona/static/js/198.735d525b.chunk.js.map",
     "90.793c3bdd.chunk.js.map": "/mi-app-persona/static/js/90.793c3bdd.chunk.js.map",
     "453.63db704f.chunk.js.map": "/mi-app-persona/static/js/453.63db704f.chunk.js.map",
@@ -62,6 +62,6 @@
   },
   "entrypoints": [
     "static/css/main.8b080a66.css",
-    "static/js/main.a0be0e96.js"
+    "static/js/main.980c1dc6.js"
   ]
 }

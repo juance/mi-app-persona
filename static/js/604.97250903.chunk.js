@@ -3,31 +3,31 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: ${r=>r.syncing||r.disabled?"var(--bg-medium)":"var(--primary-color)"};
+  background-color: ${r=>r.$syncing||r.disabled?"var(--bg-medium)":"var(--primary-color)"};
   color: white;
   border: none;
   border-radius: 4px;
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 500;
-  cursor: ${r=>r.syncing||r.disabled?"not-allowed":"pointer"};
+  cursor: ${r=>r.$syncing||r.disabled?"not-allowed":"pointer"};
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   opacity: ${r=>r.disabled?.7:1};
 
   &:hover {
-    background-color: ${r=>r.syncing||r.disabled?"var(--bg-medium)":"var(--primary-dark)"};
+    background-color: ${r=>r.$syncing||r.disabled?"var(--bg-medium)":"var(--primary-dark)"};
   }
 
   svg {
-    animation: ${r=>r.syncing?"spin 1s linear infinite":"none"};
+    animation: ${r=>r.$syncing?"spin 1s linear infinite":"none"};
   }
 
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-`,u=()=>{const[r,n]=(0,a.useState)(!1),[e,i]=(0,a.useState)(null),[o,u]=(0,a.useState)(!0);(0,a.useEffect)((()=>{(async()=>{try{const{data:{session:r}}=await c.N.auth.getSession();i((null===r||void 0===r?void 0:r.user)||null)}catch(r){console.error("Error al obtener la sesi\xf3n:",r)}finally{u(!1)}})();const{data:r}=c.N.auth.onAuthStateChange(((r,n)=>{i((null===n||void 0===n?void 0:n.user)||null)}));return()=>{var n;null===r||void 0===r||null===(n=r.subscription)||void 0===n||n.unsubscribe()}}),[]);const p=o||!e;return(0,l.jsxs)(x,{onClick:async()=>{if(!r&&e){n(!0),(0,d.cf)("Iniciando sincronizaci\xf3n forzada...");try{const r=(null===e||void 0===e?void 0:e.id)||"guest_user",n=await(0,t.kO)(r,!0);n.success?(0,d.cf)(`Sincronizaci\xf3n completada: ${n.succeeded} almacenes sincronizados`):(0,d.Qg)(`Sincronizaci\xf3n parcial: ${n.succeeded} sincronizados, ${n.failed} fallidos`)}catch(a){console.error("Error al forzar sincronizaci\xf3n:",a),(0,d.Qg)("Error al sincronizar datos")}finally{n(!1)}}},syncing:r,disabled:p,className:"sync-force-button",children:[(0,l.jsx)(s.jTZ,{size:16}),r?"Sincronizando...":p?"Inicia sesi\xf3n para sincronizar":"Sincronizar datos"]})},p=i.Ay.div`
+`,u=()=>{const[r,n]=(0,a.useState)(!1),[e,i]=(0,a.useState)(null),[o,u]=(0,a.useState)(!0);(0,a.useEffect)((()=>{(async()=>{try{const{data:{session:r}}=await c.N.auth.getSession();i((null===r||void 0===r?void 0:r.user)||null)}catch(r){console.error("Error al obtener la sesi\xf3n:",r)}finally{u(!1)}})();const{data:r}=c.N.auth.onAuthStateChange(((r,n)=>{i((null===n||void 0===n?void 0:n.user)||null)}));return()=>{var n;null===r||void 0===r||null===(n=r.subscription)||void 0===n||n.unsubscribe()}}),[]);const p=o||!e;return(0,l.jsxs)(x,{onClick:async()=>{if(!r&&e){n(!0),(0,d.cf)("Iniciando sincronizaci\xf3n forzada...");try{const r=(null===e||void 0===e?void 0:e.id)||"guest_user",n=await(0,t.kO)(r,!0);n.success?(0,d.cf)(`Sincronizaci\xf3n completada: ${n.succeeded} almacenes sincronizados`):(0,d.Qg)(`Sincronizaci\xf3n parcial: ${n.succeeded} sincronizados, ${n.failed} fallidos`)}catch(a){console.error("Error al forzar sincronizaci\xf3n:",a),(0,d.Qg)("Error al sincronizar datos")}finally{n(!1)}}},$syncing:r,disabled:p,className:"sync-force-button",children:[(0,l.jsx)(s.jTZ,{size:16}),r?"Sincronizando...":p?"Inicia sesi\xf3n para sincronizar":"Sincronizar datos"]})},p=i.Ay.div`
   max-width: 1200px;
   margin: 0 auto;
 `,h=i.Ay.div`
@@ -127,4 +127,4 @@
   margin: 0 auto 24px;
   line-height: 1.6;
 `,k=()=>(0,l.jsxs)(p,{children:[(0,l.jsxs)(h,{children:[(0,l.jsx)("h1",{children:"Dashboard"}),(0,l.jsx)("p",{children:"Bienvenido a tu panel de control personal"})]}),(0,l.jsxs)(j,{children:[(0,l.jsx)(y,{children:"\xa1Bienvenido a tu App Personal!"}),(0,l.jsx)(z,{children:"Esta aplicaci\xf3n te ayudar\xe1 a gestionar tus tareas, finanzas, inversiones, metas financieras y calendario en un solo lugar. Explora los diferentes m\xf3dulos para comenzar a organizar tu vida personal."}),(0,l.jsx)(u,{})]}),(0,l.jsxs)(g,{children:[(0,l.jsxs)(m,{to:"/tasks",children:[(0,l.jsx)(v,{children:(0,l.jsx)(s.NLe,{})}),(0,l.jsx)(b,{children:"Tareas"}),(0,l.jsx)(f,{children:"Gestiona tus tareas y pendientes"})]}),(0,l.jsxs)(m,{to:"/finances",children:[(0,l.jsx)(v,{children:(0,l.jsx)(s.z8N,{})}),(0,l.jsx)(b,{children:"Finanzas"}),(0,l.jsx)(f,{children:"Controla tus ingresos y gastos"})]}),(0,l.jsxs)(m,{to:"/investments",children:[(0,l.jsx)(v,{children:(0,l.jsx)(s.ARf,{})}),(0,l.jsx)(b,{children:"Inversiones"}),(0,l.jsx)(f,{children:"Gestiona tu cartera de inversiones"})]}),(0,l.jsxs)(m,{to:"/financial-goals",children:[(0,l.jsx)(v,{children:(0,l.jsx)(s.x_j,{})}),(0,l.jsx)(b,{children:"Metas Financieras"}),(0,l.jsx)(f,{children:"Establece y sigue tus objetivos financieros"})]}),(0,l.jsxs)(m,{to:"/calendar",children:[(0,l.jsx)(v,{children:(0,l.jsx)(s.wIk,{})}),(0,l.jsx)(b,{children:"Calendario"}),(0,l.jsx)(f,{children:"Organiza tus eventos y citas"})]}),(0,l.jsxs)(m,{as:"div",onClick:()=>document.querySelector(".sync-force-button").click(),children:[(0,l.jsx)(v,{children:(0,l.jsx)(s.Hbo,{})}),(0,l.jsx)(b,{children:"Sincronizaci\xf3n"}),(0,l.jsx)(f,{children:"Sincroniza tus datos entre dispositivos"})]})]})]})}}]);
-//# sourceMappingURL=604.9996142c.chunk.js.map
+//# sourceMappingURL=604.97250903.chunk.js.map
