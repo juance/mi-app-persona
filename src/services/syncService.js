@@ -15,8 +15,9 @@ import { showInfo, showError } from '../components/common/Notification';
 let isSyncing = false;
 let syncInterval = null;
 let lastSyncTime = null;
-const SYNC_INTERVAL = 60000; // 60 segundos
+const SYNC_INTERVAL = 30000; // 30 segundos
 const MIN_SYNC_INTERVAL = 30000; // 30 segundos (tiempo mínimo entre sincronizaciones)
+const RETRY_DELAYS = [1000, 2000, 5000, 10000]; // Tiempos de reintento en ms
 
 /**
  * Iniciar el servicio de sincronización
@@ -38,7 +39,7 @@ export const initSyncService = (options = {}) => {
       if (showNotifications) {
         showInfo('Conexión a Internet restablecida. Sincronizando datos...');
       }
-      syncData();
+      syncData(true);
     },
     // Cuando se pierde la conexión
     () => {
@@ -66,7 +67,7 @@ export const initSyncService = (options = {}) => {
 
   // Devolver métodos para controlar la sincronización
   return {
-    syncNow: syncData,
+    syncNow: () => syncData(true),
     stopSync: () => {
       if (syncInterval) {
         clearInterval(syncInterval);
@@ -97,30 +98,19 @@ export const initSyncService = (options = {}) => {
  */
 export const syncData = async (force = false) => {
   // Verificar si ya hay una sincronización en curso
-  if (isSyncing) {
-    return { success: false, message: 'Ya hay una sincronización en curso', synced: 0 };
+  if (isSyncing && !force) {
+    return { success: false, message: 'Sincronización en progreso' };
   }
 
   // Verificar si hay conexión a Internet
   if (!checkOnlineStatus()) {
-    return { success: false, message: 'No hay conexión a Internet', synced: 0 };
-  }
-
-  // Verificar si ha pasado suficiente tiempo desde la última sincronización
-  const now = Date.now();
-  if (!force && lastSyncTime && (now - lastSyncTime < MIN_SYNC_INTERVAL)) {
-    console.log(`Sincronización omitida: última sincronización hace ${Math.floor((now - lastSyncTime) / 1000)} segundos`);
-    return {
-      success: true,
-      message: 'Sincronización omitida: demasiado pronto desde la última sincronización',
-      synced: 0,
-      skipped: true
-    };
+    return { success: false, message: 'Sin conexión a Internet' };
   }
 
   // Marcar como sincronizando y actualizar tiempo de última sincronización
   isSyncing = true;
-  lastSyncTime = now;
+  lastSyncTime = Date.now();
+  let retryCount = 0;
 
   try {
     // Obtener operaciones pendientes
@@ -131,35 +121,59 @@ export const syncData = async (force = false) => {
       return { success: true, message: 'No hay operaciones pendientes', synced: 0 };
     }
 
-    // Procesar operaciones pendientes
-    const results = await Promise.allSettled(
-      pendingOperations.map(processOperation)
-    );
+    // Función para intentar sincronización con reintentos
+    const attemptSync = async (attempt = 0) => {
+      try {
+        // Procesar operaciones pendientes
+        const results = await Promise.allSettled(
+          pendingOperations.map(processOperation)
+        );
 
-    // Contar resultados
-    const succeeded = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
-    const failed = results.filter(r => r.status === 'rejected' || !r.value.success).length;
+        // Contar resultados
+        const succeeded = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
+        const failed = results.filter(r => r.status === 'rejected' || !r.value.success).length;
 
-    isSyncing = false;
+        isSyncing = false;
 
-    return {
-      success: failed === 0,
-      message: `Sincronización completada: ${succeeded} operaciones exitosas, ${failed} fallidas`,
-      synced: succeeded,
-      failed,
-      total: pendingOperations.length,
+        return {
+          success: failed === 0,
+          message: `Sincronización completada: ${succeeded} operaciones exitosas, ${failed} fallidas`,
+          synced: succeeded,
+          failed,
+          total: pendingOperations.length,
+        };
+      } catch (error) {
+        if (attempt < RETRY_DELAYS.length) {
+          // Esperar antes de reintentar
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAYS[attempt]));
+          return attemptSync(attempt + 1);
+        }
+        throw error;
+      }
     };
+
+    const result = await attemptSync();
+
+    // Disparar evento de sincronización exitosa
+    window.dispatchEvent(new CustomEvent('sync-completed', {
+      detail: { success: true }
+    }));
+
+    return result;
   } catch (error) {
     console.error('Error durante la sincronización:', error);
-    isSyncing = false;
+    showError('Error al sincronizar datos');
+
+    window.dispatchEvent(new CustomEvent('sync-failed', {
+      detail: { error: error.message }
+    }));
 
     return {
       success: false,
-      message: `Error durante la sincronización: ${error.message}`,
-      synced: 0,
-      failed: 0,
-      total: 0,
+      message: error.message
     };
+  } finally {
+    isSyncing = false;
   }
 };
 

@@ -70,9 +70,9 @@ const Tab = styled.button`
   border: none;
   padding: 8px 16px;
   font-size: 1rem;
-  color: ${props => props.active ? 'var(--primary-color)' : '#cccccc'};
-  font-weight: ${props => props.active ? '600' : '400'};
-  border-bottom: 2px solid ${props => props.active ? 'var(--primary-color)' : 'transparent'};
+  color: ${props => props.$active ? 'var(--primary-color)' : '#cccccc'};
+  font-weight: ${props => props.$active ? '600' : '400'};
+  border-bottom: 2px solid ${props => props.$active ? 'var(--primary-color)' : 'transparent'};
   cursor: pointer;
   transition: all 0.3s;
 
@@ -478,19 +478,19 @@ const PredictiveAnalytics = () => {
 
       <TabsContainer>
         <Tab
-          active={activeTab === 'cashflow'}
+          $active={activeTab === 'cashflow'}
           onClick={() => setActiveTab('cashflow')}
         >
           Flujo de Caja
         </Tab>
         <Tab
-          active={activeTab === 'income-expense'}
+          $active={activeTab === 'income-expense'}
           onClick={() => setActiveTab('income-expense')}
         >
           Ingresos y Gastos
         </Tab>
         <Tab
-          active={activeTab === 'patterns'}
+          $active={activeTab === 'patterns'}
           onClick={() => setActiveTab('patterns')}
         >
           Patrones Recurrentes

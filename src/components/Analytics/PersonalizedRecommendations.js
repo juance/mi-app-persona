@@ -78,9 +78,9 @@ const Tab = styled.button`
   border: none;
   padding: 8px 16px;
   font-size: 1rem;
-  color: ${props => props.active ? 'var(--primary-color)' : 'var(--text-medium)'};
-  font-weight: ${props => props.active ? '600' : '400'};
-  border-bottom: 2px solid ${props => props.active ? 'var(--primary-color)' : 'transparent'};
+  color: ${props => props.$active ? 'var(--primary-color)' : 'var(--text-medium)'};
+  font-weight: ${props => props.$active ? '600' : '400'};
+  border-bottom: 2px solid ${props => props.$active ? 'var(--primary-color)' : 'transparent'};
   cursor: pointer;
   transition: all 0.3s;
   
@@ -92,7 +92,7 @@ const Tab = styled.button`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: ${props => props.active ? 'var(--primary-color)' : 'var(--text-light)'};
+    background-color: ${props => props.$active ? 'var(--primary-color)' : 'var(--text-light)'};
     color: white;
     border-radius: 50%;
     width: 20px;
@@ -447,19 +447,19 @@ const PersonalizedRecommendations = () => {
       
       <TabsContainer>
         <Tab
-          active={activeTab === 'all'}
+          $active={activeTab === 'all'}
           onClick={() => setActiveTab('all')}
         >
           Todas <span className="badge">{recommendations.all.length}</span>
         </Tab>
         <Tab
-          active={activeTab === 'financial'}
+          $active={activeTab === 'financial'}
           onClick={() => setActiveTab('financial')}
         >
           Financieras <span className="badge">{recommendations.financial.length}</span>
         </Tab>
         <Tab
-          active={activeTab === 'productivity'}
+          $active={activeTab === 'productivity'}
           onClick={() => setActiveTab('productivity')}
         >
           Productividad <span className="badge">{recommendations.productivity.length}</span>

@@ -24,6 +24,17 @@ const SyncContainer = styled.div`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   max-width: 300px;
+  opacity: ${props => props.$isOnline ? 1 : 0.7};
+
+  ${props => props.$isSyncing && `
+    animation: pulse 2s infinite;
+  `}
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
 
   &.hidden {
     transform: translateY(100px);
@@ -379,7 +390,11 @@ const AppInitializer = () => {
   };
 
   return (
-    <SyncContainer className={getContainerClass()}>
+    <SyncContainer 
+      className={getContainerClass()} 
+      $isOnline={isOnline}
+      $isSyncing={syncStatus.status === 'syncing'}
+    >
       {renderIcon()}
 
       <SyncStatus>
@@ -389,7 +404,7 @@ const AppInitializer = () => {
           {syncStatus.lastSync && ` • Última: ${formatDate(syncStatus.lastSync)}`}
         </div>
       </SyncStatus>
-
+      
       <SyncButton
         onClick={() => syncData(true)}
         disabled={syncStatus.status === 'syncing' || !isOnline}

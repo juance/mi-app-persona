@@ -164,6 +164,22 @@ const NoDataMessage = styled.div`
   }
 `;
 
+const Tab = styled.button`
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  font-size: 1rem;
+  color: ${props => props.$active ? 'var(--primary-color)' : '#cccccc'};
+  font-weight: ${props => props.$active ? '600' : '400'};
+  border-bottom: 2px solid ${props => props.$active ? 'var(--primary-color)' : 'transparent'};
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+`;
+
 /**
  * Componente para mostrar el historial de tasas de cambio
  * @returns {JSX.Element} - Componente de historial de tasas de cambio

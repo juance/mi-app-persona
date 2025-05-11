@@ -1,19 +1,43 @@
 import React, { Suspense } from 'react';
 import LoadingSpinner from './LoadingSpinner';
 
-/**
- * Componente para cargar componentes de forma perezosa
- * @param {Object} props - Propiedades del componente
- * @param {React.LazyExoticComponent} props.component - Componente a cargar de forma perezosa
- * @param {Object} props.fallback - Componente a mostrar mientras se carga
- * @param {Object} props.props - Propiedades a pasar al componente
- * @returns {JSX.Element} - Componente cargado de forma perezosa
- */
+const ErrorFallback = ({ error }) => (
+  <div className="error-boundary">
+    <h2>Lo sentimos, ha ocurrido un error</h2>
+    <p>{error.message}</p>
+    <button onClick={() => window.location.reload()}>Recargar página</button>
+  </div>
+);
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Error en LazyLoad:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error} />;
+    }
+    return this.props.children;
+  }
+}
+
 const LazyLoad = ({ component: Component, fallback = <LoadingSpinner text="Cargando..." />, ...props }) => {
   return (
-    <Suspense fallback={fallback}>
-      <Component {...props} />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={fallback}>
+        <Component {...props} />
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 

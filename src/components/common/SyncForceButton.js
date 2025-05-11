@@ -20,7 +20,6 @@ const SyncButton = styled.button`
   cursor: ${props => props.$syncing || props.disabled ? 'not-allowed' : 'pointer'};
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  opacity: ${props => props.disabled ? 0.7 : 1};
 
   &:hover {
     background-color: ${props => props.$syncing || props.disabled ? 'var(--bg-medium)' : 'var(--primary-dark)'};

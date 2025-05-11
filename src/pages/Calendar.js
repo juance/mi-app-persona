@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { FiPlus } from 'react-icons/fi';
 import CalendarGrid from '../components/Calendar/CalendarGrid';
@@ -118,6 +118,7 @@ const Calendar = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lastSyncTimestamp, setLastSyncTimestamp] = useState(null);
 
   // Cargar eventos desde el almacenamiento local
   useEffect(() => {
@@ -136,29 +137,30 @@ const Calendar = () => {
     };
 
     loadEvents();
+  }, []);
 
-    // Escuchar eventos de sincronización
-    const handleDataSynced = (event) => {
-      const { detail } = event;
-      if (detail.success && detail.stores && detail.stores.includes('events')) {
+  // Escuchar eventos de sincronización
+  const handleDataSynced = useCallback((event) => {
+    const { detail } = event;
+    if (detail.success && detail.stores && detail.stores.includes('events')) {
+      const now = Date.now();
+      // Evitar actualizaciones múltiples en un corto período de tiempo
+      if (!lastSyncTimestamp || now - lastSyncTimestamp > 2000) {
         console.log('Datos de eventos sincronizados, recargando...');
-        // Recargar eventos desde el almacenamiento local
         const syncedData = getEvents();
         if (syncedData && syncedData.length > 0) {
-          console.log('Eventos actualizados desde sincronización:', syncedData.length);
           setEvents(syncedData);
-          showInfo('Eventos actualizados');
+          // Actualizar el timestamp de última sincronización
+          setLastSyncTimestamp(now);
         }
       }
-    };
+    }
+  }, [lastSyncTimestamp]);
 
+  useEffect(() => {
     window.addEventListener('data-synced', handleDataSynced);
-
-    // Limpiar suscripciones al desmontar
-    return () => {
-      window.removeEventListener('data-synced', handleDataSynced);
-    };
-  }, []);
+    return () => window.removeEventListener('data-synced', handleDataSynced);
+  }, [handleDataSynced]);
 
   const handleSelectDate = (date) => {
     setSelectedDate(date);

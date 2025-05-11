@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { FiPlus } from 'react-icons/fi';
 import FinancialSummary from '../components/Finances/FinancialSummary';
@@ -131,6 +131,25 @@ const Finances = () => {
     confirmText: 'Confirmar',
     confirmVariant: 'primary'
   });
+  const [lastSyncTimestamp, setLastSyncTimestamp] = useState(null);
+
+  // Mover handleDataSynced fuera del efecto y envolverlo con useCallback
+  const handleDataSynced = useCallback((event) => {
+    const { detail } = event;
+    if (detail.success && detail.stores && detail.stores.includes('transactions')) {
+      const now = Date.now();
+      // Evitar actualizaciones múltiples en un corto período de tiempo
+      if (!lastSyncTimestamp || now - lastSyncTimestamp > 2000) {
+        console.log('Datos de transacciones sincronizados, recargando...');
+        const syncedData = getTransactions();
+        if (syncedData && syncedData.length > 0) {
+          setTransactions(syncedData);
+          // Actualizar el timestamp de última sincronización
+          setLastSyncTimestamp(now);
+        }
+      }
+    }
+  }, [lastSyncTimestamp]);
 
   // Cargar transacciones desde el almacenamiento local y luego intentar desde Supabase
   useEffect(() => {
@@ -239,21 +258,6 @@ const Finances = () => {
 
     setupRealtimeSubscription();
 
-    // Escuchar eventos de sincronización
-    const handleDataSynced = (event) => {
-      const { detail } = event;
-      if (detail.success && detail.stores && detail.stores.includes('transactions')) {
-        console.log('Datos de transacciones sincronizados, recargando...');
-        // Recargar transacciones desde el almacenamiento local
-        const syncedData = getTransactions();
-        if (syncedData && syncedData.length > 0) {
-          console.log('Transacciones actualizadas desde sincronización:', syncedData.length);
-          setTransactions(syncedData);
-          showInfo('Transacciones actualizadas');
-        }
-      }
-    };
-
     window.addEventListener('data-synced', handleDataSynced);
 
     // Limpiar suscripciones al desmontar
@@ -261,7 +265,7 @@ const Finances = () => {
       unsubscribe(subscription);
       window.removeEventListener('data-synced', handleDataSynced);
     };
-  }, []);
+  }, [handleDataSynced]);
 
   // Aplicar filtros y ordenamiento cuando cambian los filtros o las transacciones
   useEffect(() => {

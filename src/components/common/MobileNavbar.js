@@ -30,7 +30,7 @@ const NavItem = styled(Link)`
   justify-content: center;
   flex: 1;
   height: 100%;
-  color: ${props => props.active ? 'var(--primary-color)' : 'var(--text-medium)'};
+  color: ${props => props.$active ? 'var(--primary-color)' : 'var(--text-medium)'};
   text-decoration: none;
   font-size: 0.7rem;
   padding: 8px 0;
@@ -67,7 +67,7 @@ const NavIcon = styled.div`
 `;
 
 const NavLabel = styled.span`
-  font-weight: ${props => props.active ? '600' : '400'};
+  font-weight: ${props => props.$active ? '600' : '400'};
 `;
 
 const MobileNavbar = () => {
@@ -84,53 +84,53 @@ const MobileNavbar = () => {
 
   return (
     <MobileNavContainer className="mobile-nav">
-      <NavItem to="/" active={location.pathname === '/'}>
+      <NavItem to="/" $active={location.pathname === '/'}>
         <NavIcon>
           <FiHome />
         </NavIcon>
-        <NavLabel active={location.pathname === '/'}>Inicio</NavLabel>
+        <NavLabel $active={location.pathname === '/'}>Inicio</NavLabel>
       </NavItem>
 
-      <NavItem to="/tasks" active={location.pathname === '/tasks'}>
+      <NavItem to="/tasks" $active={location.pathname === '/tasks'}>
         <NavIcon>
           <FiCheckSquare />
         </NavIcon>
-        <NavLabel active={location.pathname === '/tasks'}>Tareas</NavLabel>
+        <NavLabel $active={location.pathname === '/tasks'}>Tareas</NavLabel>
       </NavItem>
 
-      <NavItem to="/finances" active={location.pathname === '/finances'}>
+      <NavItem to="/finances" $active={location.pathname === '/finances'}>
         <NavIcon>
           <FiDollarSign />
         </NavIcon>
-        <NavLabel active={location.pathname === '/finances'}>Finanzas</NavLabel>
+        <NavLabel $active={location.pathname === '/finances'}>Finanzas</NavLabel>
       </NavItem>
 
-      <NavItem to="/investments" active={location.pathname === '/investments'}>
+      <NavItem to="/investments" $active={location.pathname === '/investments'}>
         <NavIcon>
           <FiTrendingUp />
         </NavIcon>
-        <NavLabel active={location.pathname === '/investments'}>Inversiones</NavLabel>
+        <NavLabel $active={location.pathname === '/investments'}>Inversiones</NavLabel>
       </NavItem>
 
-      <NavItem to="/financial-goals" active={location.pathname === '/financial-goals'}>
+      <NavItem to="/financial-goals" $active={location.pathname === '/financial-goals'}>
         <NavIcon>
           <FiTarget />
         </NavIcon>
-        <NavLabel active={location.pathname === '/financial-goals'}>Metas</NavLabel>
+        <NavLabel $active={location.pathname === '/financial-goals'}>Metas</NavLabel>
       </NavItem>
 
-      <NavItem to="/analytics" active={location.pathname === '/analytics'}>
+      <NavItem to="/analytics" $active={location.pathname === '/analytics'}>
         <NavIcon>
           <FiPieChart />
         </NavIcon>
-        <NavLabel active={location.pathname === '/analytics'}>Análisis</NavLabel>
+        <NavLabel $active={location.pathname === '/analytics'}>Análisis</NavLabel>
       </NavItem>
 
-      <NavItem to="/profile" active={location.pathname === '/profile'}>
+      <NavItem to="/profile" $active={location.pathname === '/profile'}>
         <NavIcon>
           <FiUser />
         </NavIcon>
-        <NavLabel active={location.pathname === '/profile'}>Perfil</NavLabel>
+        <NavLabel $active={location.pathname === '/profile'}>Perfil</NavLabel>
       </NavItem>
 
       <NavButton onClick={handleLogout}>

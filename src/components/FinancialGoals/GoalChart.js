@@ -39,8 +39,8 @@ const ChartOptions = styled.div`
 `;
 
 const ChartTypeButton = styled.button`
-  background-color: ${props => props.active ? 'var(--primary-color)' : 'var(--bg-medium)'};
-  color: ${props => props.active ? 'white' : 'var(--text-medium)'};
+  background-color: ${props => props.$active ? 'var(--primary-color)' : 'var(--bg-medium)'};
+  color: ${props => props.$active ? 'white' : 'var(--text-medium)'};
   border: none;
   padding: 10px 20px;
   border-radius: 30px;
@@ -48,10 +48,10 @@ const ChartTypeButton = styled.button`
   font-size: 0.9rem;
   font-weight: 500;
   transition: all var(--transition-speed);
-  box-shadow: ${props => props.active ? '0 4px 8px rgba(99, 102, 241, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.05)'};
+  box-shadow: ${props => props.$active ? '0 4px 8px rgba(99, 102, 241, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.05)'};
 
   &:hover {
-    background-color: ${props => props.active ? 'var(--primary-color)' : 'var(--bg-light)'};
+    background-color: ${props => props.$active ? 'var(--primary-color)' : 'var(--bg-light)'};
     transform: translateY(-2px);
   }
 `;
@@ -209,13 +209,13 @@ const GoalChart = ({ goals }) => {
 
       <ChartOptions>
         <ChartTypeButton
-          active={chartType === 'bar'}
+          $active={chartType === 'bar'}
           onClick={() => setChartType('bar')}
         >
           Barras
         </ChartTypeButton>
         <ChartTypeButton
-          active={chartType === 'pie'}
+          $active={chartType === 'pie'}
           onClick={() => setChartType('pie')}
         >
           Circular

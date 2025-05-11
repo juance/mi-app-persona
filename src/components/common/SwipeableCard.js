@@ -21,6 +21,7 @@ const AnimatedCard = styled(animated.div)`
   margin-bottom: 16px;
   position: relative;
   z-index: 1;
+  transform: translateX(${props => props.$x}px);
 `;
 
 // Acciones a la izquierda (aparecen al deslizar a la derecha)
@@ -33,8 +34,8 @@ const LeftActions = styled.div`
   align-items: center;
   padding: 0 16px;
   color: white;
-  background-color: var(--success-color);
-  border-radius: var(--border-radius);
+  opacity: ${props => props.$visible ? 1 : 0};
+  transition: opacity var(--transition-speed);
 `;
 
 // Acciones a la derecha (aparecen al deslizar a la izquierda)
@@ -47,8 +48,8 @@ const RightActions = styled.div`
   align-items: center;
   padding: 0 16px;
   color: white;
-  background-color: var(--danger-color);
-  border-radius: var(--border-radius);
+  opacity: ${props => props.$visible ? 1 : 0};
+  transition: opacity var(--transition-speed);
 `;
 
 /**
@@ -137,14 +138,15 @@ const SwipeableCard = ({
   
   return (
     <CardContainer {...props}>
-      {leftAction && <LeftActions>{leftAction}</LeftActions>}
-      {rightAction && <RightActions>{rightAction}</RightActions>}
+      {leftAction && <LeftActions $visible={x.get() > 0}>{leftAction}</LeftActions>}
+      {rightAction && <RightActions $visible={x.get() < 0}>{rightAction}</RightActions>}
       
       <AnimatedCard
         style={{
           ...style,
           transform: x.to(x => `translateX(${x}px)`),
         }}
+        $x={x.get()}
         {...gestureHandlers}
         onTouchMove={handleTouchMove}
       >

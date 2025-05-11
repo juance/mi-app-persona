@@ -206,8 +206,8 @@ const FinancialSummary = ({ transactions, exchangeRate = 1.1 }) => {
     border: none;
     padding: 10px 20px;
     font-size: 1rem;
-    font-weight: ${props => props.active ? '600' : '400'};
-    color: ${props => props.active ? 'var(--primary-color)' : 'var(--text-medium)'};
+    font-weight: ${props => props.$active ? '600' : '400'};
+    color: ${props => props.$active ? 'var(--primary-color)' : 'var(--text-medium)'};
     cursor: pointer;
     position: relative;
     display: flex;
@@ -221,7 +221,7 @@ const FinancialSummary = ({ transactions, exchangeRate = 1.1 }) => {
       left: 0;
       width: 100%;
       height: 2px;
-      background-color: ${props => props.active ? 'var(--primary-color)' : 'transparent'};
+      background-color: ${props => props.$active ? 'var(--primary-color)' : 'transparent'};
       transition: background-color var(--transition-speed);
     }
 
@@ -234,21 +234,21 @@ const FinancialSummary = ({ transactions, exchangeRate = 1.1 }) => {
     <div>
       <TabsContainer>
         <Tab
-          active={activeTab === 'total'}
+          $active={activeTab === 'total'}
           onClick={() => setActiveTab('total')}
         >
           <FiDollarSign />
           Total
         </Tab>
         <Tab
-          active={activeTab === 'cash'}
+          $active={activeTab === 'cash'}
           onClick={() => setActiveTab('cash')}
         >
           <FiPocket />
           Efectivo
         </Tab>
         <Tab
-          active={activeTab === 'digital'}
+          $active={activeTab === 'digital'}
           onClick={() => setActiveTab('digital')}
         >
           <FiCreditCard />

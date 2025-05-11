@@ -102,17 +102,24 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
+      
+      // Primero limpiar el estado local
+      setUser(null);
+      
+      // Luego cerrar sesión en Supabase
       const { error: authError } = await signOut();
       
       if (authError) {
         setError(authError.message);
         return { error: authError };
       }
+
+      // Limpiar cualquier dato en localStorage
+      localStorage.removeItem('supabase.auth.token');
       
-      setUser(null);
       return { error: null };
     } catch (err) {
-      console.error('Error logging out:', err);
+      console.error('Error al cerrar sesión:', err);
       setError('Error al cerrar sesión');
       return { error: err };
     } finally {

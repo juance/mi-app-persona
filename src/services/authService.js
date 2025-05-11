@@ -29,16 +29,36 @@ export const signUp = async (email, password) => {
  */
 export const signIn = async (email, password) => {
   try {
+    // Validar que el email y la contraseña no estén vacíos
+    if (!email || !password) {
+      throw new Error('El email y la contraseña son requeridos');
+    }
+
+    // Limpiar cualquier sesión anterior que pudiera quedar
+    await supabase.auth.signOut();
+
+    // Intentar iniciar sesión
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) throw error;
+
+    // Verificar que tenemos un usuario válido
+    if (!data?.user) {
+      throw new Error('No se pudo iniciar sesión. Por favor, verifica tus credenciales.');
+    }
+
     return { user: data.user, error: null };
   } catch (error) {
-    console.error('Error signing in:', error);
-    return { user: null, error };
+    console.error('Error al iniciar sesión:', error);
+    return { 
+      user: null, 
+      error: {
+        message: error.message || 'Error al iniciar sesión. Por favor, intenta nuevamente.'
+      }
+    };
   }
 };
 

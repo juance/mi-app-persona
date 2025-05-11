@@ -57,14 +57,14 @@ const TabsContainer = styled.div`
   }
 `;
 
-const Tab = styled.button`
-  background: none;
-  border: none;
+const TabItem = styled.button`
   padding: 12px 24px;
+  border: none;
+  background: none;
   font-size: 1.1rem;
-  color: ${props => props.active ? 'var(--primary-color)' : '#b0b0b0'};
-  font-weight: ${props => props.active ? '600' : '400'};
-  border-bottom: 3px solid ${props => props.active ? 'var(--primary-color)' : 'transparent'};
+  color: ${props => props.$active ? 'var(--primary-color)' : '#b0b0b0'};
+  font-weight: ${props => props.$active ? '600' : '400'};
+  border-bottom: 3px solid ${props => props.$active ? 'var(--primary-color)' : 'transparent'};
   cursor: pointer;
   transition: all 0.3s;
   display: flex;
@@ -111,30 +111,30 @@ const Analytics = () => {
       </AnalyticsHeader>
 
       <TabsContainer>
-        <Tab
-          active={activeTab === 'financial'}
+        <TabItem
+          $active={activeTab === 'financial'}
           onClick={() => setActiveTab('financial')}
         >
           <FiBarChart2 /> Análisis Histórico
-        </Tab>
-        <Tab
-          active={activeTab === 'predictive'}
+        </TabItem>
+        <TabItem
+          $active={activeTab === 'predictive'}
           onClick={() => setActiveTab('predictive')}
         >
           <FiTrendingUp /> Predicciones
-        </Tab>
-        <Tab
-          active={activeTab === 'recommendations'}
+        </TabItem>
+        <TabItem
+          $active={activeTab === 'recommendations'}
           onClick={() => setActiveTab('recommendations')}
         >
           <FiMessageSquare /> Recomendaciones
-        </Tab>
-        <Tab
-          active={activeTab === 'exchange'}
+        </TabItem>
+        <TabItem
+          $active={activeTab === 'exchange'}
           onClick={() => setActiveTab('exchange')}
         >
           <FiDollarSign /> Tasas de Cambio
-        </Tab>
+        </TabItem>
       </TabsContainer>
 
       {renderContent()}

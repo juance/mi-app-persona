@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import GoalChart from '../components/FinancialGoals/GoalChart';
 import GoalFilters from '../components/FinancialGoals/GoalFilters';
@@ -132,6 +132,7 @@ const FinancialGoals = () => {
   const [loading, setLoading] = useState(true);
   const [showCategoryManager, setShowCategoryManager] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [lastSyncTimestamp, setLastSyncTimestamp] = useState(null);
 
   // Cargar metas financieras desde el almacenamiento local
   useEffect(() => {
@@ -152,19 +153,22 @@ const FinancialGoals = () => {
     loadGoals();
 
     // Escuchar eventos de sincronización
-    const handleDataSynced = (event) => {
+    const handleDataSynced = useCallback((event) => {
       const { detail } = event;
       if (detail.success && detail.stores && detail.stores.includes('financial_goals')) {
-        console.log('Datos de metas financieras sincronizados, recargando...');
-        // Recargar metas financieras desde el almacenamiento local
-        const syncedData = getFinancialGoals();
-        if (syncedData && syncedData.length > 0) {
-          console.log('Metas financieras actualizadas desde sincronización:', syncedData.length);
-          setGoals(syncedData);
-          showInfo('Metas financieras actualizadas');
+        const now = Date.now();
+        // Evitar actualizaciones múltiples en un corto período de tiempo
+        if (!lastSyncTimestamp || now - lastSyncTimestamp > 2000) {
+          console.log('Datos de metas financieras sincronizados, recargando...');
+          const syncedData = getFinancialGoals();
+          if (syncedData && syncedData.length > 0) {
+            setGoals(syncedData);
+            // Actualizar el timestamp de última sincronización
+            setLastSyncTimestamp(now);
+          }
         }
       }
-    };
+    }, [lastSyncTimestamp]);
 
     window.addEventListener('data-synced', handleDataSynced);
 
@@ -172,7 +176,7 @@ const FinancialGoals = () => {
     return () => {
       window.removeEventListener('data-synced', handleDataSynced);
     };
-  }, []);
+  }, [lastSyncTimestamp]);
 
   // Cargar categorías
   useEffect(() => {
