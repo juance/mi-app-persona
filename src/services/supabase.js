@@ -18,11 +18,7 @@ const createSupabaseClient = () => {
         storageKey: 'supabase.auth.token',
         debug: process.env.NODE_ENV === 'development'
       },
-      realtime: {
-        params: {
-          eventsPerSecond: 10
-        }
-      }
+      realtime: false // Desactivar WebSocket
     });
   } catch (error) {
     console.error('Error al crear cliente Supabase:', error);
