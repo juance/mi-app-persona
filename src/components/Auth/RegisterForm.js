@@ -124,40 +124,34 @@ const RegisterForm = ({ onSwitchToLogin }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [formError, setFormError] = useState('');
-  const { register, loading, error } = useAuth();
-  
+  const { signUp, loading, error } = useAuth();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     // Validación básica
     if (!email.trim()) {
       setFormError('Por favor ingresa tu email');
       return;
     }
-    
     if (!password) {
       setFormError('Por favor ingresa tu contraseña');
       return;
     }
-    
     if (password.length < 6) {
       setFormError('La contraseña debe tener al menos 6 caracteres');
       return;
     }
-    
     if (password !== confirmPassword) {
       setFormError('Las contraseñas no coinciden');
       return;
     }
-    
-    // Intentar registrarse
-    const { error } = await register(email, password);
-    
-    if (error) {
-      setFormError(error.message || 'Error al registrarse');
+    setFormError('');
+    const result = await signUp(email, password, email.split('@')[0]);
+    if (!result) {
+      setFormError(error || 'Error al registrarse');
     }
   };
-  
+
   return (
     <FormContainer>
       <FormTitle>Crear Cuenta</FormTitle>

@@ -1,5 +1,4 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { supabase } from '../services/supabase';
 
 const AuthContext = createContext();
 
@@ -8,116 +7,80 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Cargar usuario desde localStorage al iniciar
   useEffect(() => {
-    // Verificar sesión actual
-    const checkUser = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user || null);
-      } catch (error) {
-        console.error('Error checking auth session:', error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkUser();
-
-    // Escuchar cambios de autenticación
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user || null);
-        setLoading(false);
-      }
-    );
-
-    return () => {
-      authListener?.subscription?.unsubscribe();
-    };
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
   }, []);
 
-  const signUp = async (email, password) => {
-    try {
-      setError(null);
-      const { data, error } = await supabase.auth.signUp({ 
-        email, 
-        password 
-      });
-      
-      if (error) throw error;
-      
-      return data;
-    } catch (error) {
-      console.error('Error signing up:', error);
-      setError(error.message);
-      return null;
-    }
-  };
-
+  // Login usando backend Express
   const signIn = async (email, password) => {
+    setError(null);
+    setLoading(true);
     try {
-      setError(null);
-      const { data, error } = await supabase.auth.signInWithPassword({ 
-        email, 
-        password 
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
       });
-      
-      if (error) throw error;
-      
-      return data;
-    } catch (error) {
-      console.error('Error signing in:', error);
-      setError(error.message);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Error al iniciar sesión');
+      }
+      const data = await response.json();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setUser(data.user);
+      setLoading(false);
+      return data.user;
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
       return null;
     }
   };
 
-  const signOut = async () => {
+  // Registro usando backend Express
+  const signUp = async (email, password, name) => {
+    setError(null);
+    setLoading(true);
     try {
-      setError(null);
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) throw error;
-      
-      return true;
-    } catch (error) {
-      console.error('Error signing out:', error);
-      setError(error.message);
-      return false;
-    }
-  };
-
-  const resetPassword = async (email) => {
-    try {
-      setError(null);
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name, username: email })
       });
-      
-      if (error) throw error;
-      
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Error al registrar usuario');
+      }
+      setLoading(false);
       return true;
-    } catch (error) {
-      console.error('Error resetting password:', error);
-      setError(error.message);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
       return false;
     }
   };
 
-  const updatePassword = async (password) => {
-    try {
-      setError(null);
-      const { error } = await supabase.auth.updateUser({ password });
-      
-      if (error) throw error;
-      
-      return true;
-    } catch (error) {
-      console.error('Error updating password:', error);
-      setError(error.message);
-      return false;
-    }
+  // Logout
+  const signOut = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+  };
+
+  // Métodos de recuperación y actualización de contraseña pueden implementarse según el backend
+  const resetPassword = async () => {
+    setError('Funcionalidad no implementada');
+    return false;
+  };
+  const updatePassword = async () => {
+    setError('Funcionalidad no implementada');
+    return false;
   };
 
   const value = {

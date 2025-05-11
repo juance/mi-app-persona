@@ -138,7 +138,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToReset }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState('');
-  const { login, loading, error } = useAuth();
+  const { signIn, loading, error } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -154,11 +154,10 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToReset }) => {
       return;
     }
 
-    // Intentar iniciar sesión
-    const { error } = await login(email, password);
-
-    if (error) {
-      setFormError(error.message || 'Error al iniciar sesión');
+    setFormError('');
+    const user = await signIn(email, password);
+    if (!user) {
+      setFormError(error || 'Error al iniciar sesión');
     }
   };
 
